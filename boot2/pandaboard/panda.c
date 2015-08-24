@@ -44,7 +44,7 @@
 #define GPIO6		0x4805d138
 #define GPIO_182	1 << 22
 
-int
+void
 board_setup(void)
 {
 	unsigned int rev = omap_revision();
@@ -73,8 +73,6 @@ board_setup(void)
 			clrsetbits32(ALTCLKSRC, 0x0000000c, 0x3 << 2);
 		}
 	}
-
-	return (0);
 }
 
 #define MUX_DEFAULT_OMAP4() \

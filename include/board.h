@@ -24,6 +24,6 @@
  * SUCH DAMAGE.
  */
 
-int board_setup(void);
+void board_setup(void);
 void ddr_init();
 void set_muxconf_regs(void);

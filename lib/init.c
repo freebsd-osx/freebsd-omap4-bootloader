@@ -24,10 +24,12 @@
  * SUCH DAMAGE.
  */
 
+#include <board.h>
 #include <console.h>
 
 void
 board_init(void)
 {
+	board_setup();
 	console_init();
 }
