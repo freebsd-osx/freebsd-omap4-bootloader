@@ -329,16 +329,14 @@ cpu_late_init(void)
 	uint32_t rev;
 
 	rev = omap_revision();
-
 	if (rev < OMAP4470_ES1_0)
 		writel(0x00084000, CONTROL_EFUSE_2);
 
-
-	/* If MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
-	if (((rev >= OMAP4460_ES1_0)
-			&& ((readl(LDOSRAM_IVA_VOLTAGE_CTRL) &  ~(0x3e0)) == 0x0))
-			|| ((rev >= OMAP4430_ES2_2) && (rev < OMAP4460_ES1_0)
-			&& (!(readl(LDOSRAM_IVA_VOLTAGE_CTRL))))) {
+	int omap4430_condition = ((rev >= OMAP4460_ES1_0)
+				&& ((readl(LDOSRAM_IVA_VOLTAGE_CTRL) &  ~(0x3e0)) == 0x0));
+	int omap4460_condition = ((rev >= OMAP4430_ES2_2) && (rev < OMAP4460_ES1_0)
+				&& (!(readl(LDOSRAM_IVA_VOLTAGE_CTRL))));
+	if (omap4430_condition  || omap4460_condition) {
 		/* Set M factor to max (2.7) */
 		writel(0x0401040f, LDOSRAM_IVA_VOLTAGE_CTRL);
 		writel(0x0401040f, LDOSRAM_MPU_VOLTAGE_CTRL);
@@ -346,8 +344,6 @@ cpu_late_init(void)
 		if (rev < OMAP4470_ES1_0)
 			writel(0x000001c0, CONTROL_EFUSE_1);
 	}
-
-
 }
 
 void
