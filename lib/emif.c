@@ -60,8 +60,8 @@
 #define MR1_NWR7			5
 #define MR1_NWR8			6
 
-#define MR1_VALUE	(MR1_NWR3 << 5) | (MR1_WC << 4) | (MR1_BT_SEQ << 3)  \
-							| (MR1_BL8 << 0)
+#define MR1_VALUE	(MR1_NWR3 << 5) | (MR1_WC << 4) | \
+			(MR1_BT_SEQ << 3) | (MR1_BL8 << 0)
 
 /* defines for MR2 */
 #define MR2_RL3_WL1			1
@@ -93,8 +93,7 @@
 void
 reset_phy(uint32_t base)
 {
-	writel(readl(base + IODFT_TLGC) | (1 << 10),
-			base + IODFT_TLGC);
+	writel(readl(base + IODFT_TLGC) | (1 << 10), base + IODFT_TLGC);
 }
 
 static void
@@ -197,8 +196,7 @@ emif_config(uint32_t base, const struct ddr_regs *ddr_regs)
 	/* set MR16 register */
 	writel(MR16_ADDR | REF_EN, base + EMIF_LPDDR2_MODE_REG_CFG);
 	writel(0, base + EMIF_LPDDR2_MODE_REG_DATA);
-	writel(CS1_MR(MR16_ADDR | REF_EN),
-			base + EMIF_LPDDR2_MODE_REG_CFG);
+	writel(CS1_MR(MR16_ADDR | REF_EN), base + EMIF_LPDDR2_MODE_REG_CFG);
 	writel(0, base + EMIF_LPDDR2_MODE_REG_DATA);
 	/* LPDDR2 init complete */
 }
@@ -269,8 +267,8 @@ emif_init(const struct ddr_regs *emif1_ddr_regs,
 	sdelay(200);
 
 	/* Check for DDR PHY ready for EMIF1 & EMIF2 */
-	while (((readl(EMIF1_BASE + EMIF_STATUS) & 0x04) != 0x04)
-			|| ((readl(EMIF2_BASE + EMIF_STATUS) & 0x04) != 0x04));
+	while (((readl(EMIF1_BASE + EMIF_STATUS) & 0x04) != 0x04) ||
+	       ((readl(EMIF2_BASE + EMIF_STATUS) & 0x04) != 0x04));
 
 	/* Reprogram the DDR PYHY Control register */
 	/* PHY control values */

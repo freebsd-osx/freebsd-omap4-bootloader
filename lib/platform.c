@@ -208,9 +208,9 @@ omap_vc_bypass_send_value(uint8_t sa, uint8_t reg_addr, uint8_t reg_data)
 	reg_data &= PRM_VC_VAL_BYPASS_DATA_MASK;
 
 	/* program VC to send data */
-	reg_val = sa << PRM_VC_VAL_BYPASS_SLAVEADDR_SHIFT
-			| reg_addr << PRM_VC_VAL_BYPASS_REGADDR_SHIFT
-			| reg_data << PRM_VC_VAL_BYPASS_DATA_SHIFT;
+	reg_val = sa << PRM_VC_VAL_BYPASS_SLAVEADDR_SHIFT |
+		  reg_addr << PRM_VC_VAL_BYPASS_REGADDR_SHIFT |
+		  reg_data << PRM_VC_VAL_BYPASS_DATA_SHIFT;
 	writel(reg_val, PRM_VC_VAL_BYPASS);
 
 	/* Signal VC to send data */
@@ -340,10 +340,10 @@ omap_vc_init(uint8_t hscll, uint8_t hsclh, uint8_t scll, uint8_t sclh)
 	scll &= PRM_VC_CFG_I2C_CLK_SCLL_MASK;
 	sclh &= PRM_VC_CFG_I2C_CLK_SCLH_MASK;
 
-	val = hscll << PRM_VC_CFG_I2C_CLK_HSCLL_SHIFT
-		| hsclh << PRM_VC_CFG_I2C_CLK_HSCLH_SHIFT
-		| scll << PRM_VC_CFG_I2C_CLK_SCLL_SHIFT
-		| sclh << PRM_VC_CFG_I2C_CLK_SCLH_SHIFT;
+	val = hscll << PRM_VC_CFG_I2C_CLK_HSCLL_SHIFT |
+		hsclh << PRM_VC_CFG_I2C_CLK_HSCLH_SHIFT |
+		scll << PRM_VC_CFG_I2C_CLK_SCLL_SHIFT |
+		sclh << PRM_VC_CFG_I2C_CLK_SCLH_SHIFT;
 	writel(val, PRM_VC_CFG_I2C_CLK);
 }
 
@@ -371,10 +371,10 @@ cpu_late_init(void)
 	if (rev < OMAP4470_ES1_0)
 		writel(0x00084000, CONTROL_EFUSE_2);
 
-	int omap4430_condition = ((rev >= OMAP4460_ES1_0)
-				&& ((readl(LDOSRAM_IVA_VOLTAGE_CTRL) &  ~(0x3e0)) == 0x0));
-	int omap4460_condition = ((rev >= OMAP4430_ES2_2) && (rev < OMAP4460_ES1_0)
-				&& (!(readl(LDOSRAM_IVA_VOLTAGE_CTRL))));
+	int omap4430_condition = ((rev >= OMAP4460_ES1_0) &&
+				 ((readl(LDOSRAM_IVA_VOLTAGE_CTRL) &  ~(0x3e0)) == 0x0));
+	int omap4460_condition = ((rev >= OMAP4430_ES2_2) && (rev < OMAP4460_ES1_0) &&
+				 (!(readl(LDOSRAM_IVA_VOLTAGE_CTRL))));
 	if (omap4430_condition || omap4460_condition) {
 		/* Set M factor to max (2.7) */
 		writel(0x0401040f, LDOSRAM_IVA_VOLTAGE_CTRL);
