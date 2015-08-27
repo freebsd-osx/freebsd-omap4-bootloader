@@ -39,6 +39,28 @@
 #define CONTROL_ID_CODE		(OMAP44XX_CTRL_BASE + 0x204)
 #define CONTROL_STATUS		(OMAP44XX_CTRL_BASE + 0x2c4)
 
+/* PL310 */
+#define OMAP44XX_PL310_BASE		0x48242000
+
+/* TAP information  dont know for 3430*/
+#define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
+
+/* STD_FUSE_PROD_ID_1 */
+#define STD_FUSE_PROD_ID_1              (OMAP44XX_CTRL_BASE + 0x218)
+#define PROD_ID_1_SILICON_TYPE_SHIFT    16
+#define PROD_ID_1_SILICON_TYPE_MASK     (3 << 16)
+
+#define PROD_ID_1_SILICON_TYPE_LOW_PERF         0
+#define PROD_ID_1_SILICON_TYPE_STD_PERF         1
+#define PROD_ID_1_SILICON_TYPE_HIGH_PERF        2
+
+/* Device type */
+#define DEVICE_MASK		(1 << 8 | 1 << 9 | 1 << 10)
+#define TST_DEVICE		0x0
+#define EMU_DEVICE		0x1
+#define HS_DEVICE		0x2
+#define GP_DEVICE		0x3
+
 /* WatchDog Timers (1 secure, 3 GP) */
 #define WD1_BASE		(0x4a322000)
 #define WD2_BASE		(0x4a314000)

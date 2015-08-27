@@ -111,6 +111,45 @@ omap_revision(void)
 	}
 }
 
+uint32_t
+get_device_type(void)
+{
+	/* GP/EMU/HS/TST stored in CONTROL_STATUS */
+	return ((readl(CONTROL_STATUS) & DEVICE_MASK) >> 8);
+}
+
+unsigned int
+get_boot_mode(void)
+{
+	/* The boot mode stored in scratchpad */
+	return ((*(volatile unsigned int *)(0x4A326004)) & 0xf);
+}
+
+unsigned int
+get_boot_device(void)
+{
+	/* The boot device stored in scratchpad */
+	return ((*(volatile unsigned int *)(0x4A326000)) & 0xff);
+}
+
+unsigned int
+raw_boot(void)
+{
+	if (get_boot_mode() == 1)
+		return (1);
+	else
+		return (0);
+}
+
+unsigned int
+fat_boot(void)
+{
+	if (get_boot_mode() == 2)
+		return (1);
+	else
+		return (0);
+}
+
 static void
 wait_for_command_complete(uint32_t wd_base)
 {
@@ -336,7 +375,7 @@ cpu_late_init(void)
 				&& ((readl(LDOSRAM_IVA_VOLTAGE_CTRL) &  ~(0x3e0)) == 0x0));
 	int omap4460_condition = ((rev >= OMAP4430_ES2_2) && (rev < OMAP4460_ES1_0)
 				&& (!(readl(LDOSRAM_IVA_VOLTAGE_CTRL))));
-	if (omap4430_condition  || omap4460_condition) {
+	if (omap4430_condition || omap4460_condition) {
 		/* Set M factor to max (2.7) */
 		writel(0x0401040f, LDOSRAM_IVA_VOLTAGE_CTRL);
 		writel(0x0401040f, LDOSRAM_MPU_VOLTAGE_CTRL);

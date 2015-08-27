@@ -5,9 +5,10 @@ LIB=		omap4
 INTERNALLIB=
 WARNS?=		2
 
-SRCS+=	platform.c clock.c emif.c
+SRCS+=	init.c platform.c clock.c emif.c
 SRCS+=	printf.c console.c uart_ns16550.c
-SRCS+=	init.c
+SRCS+=	mmc.c
+SRCS+=	__aeabi_uidiv.c __udivmodsi4.c
 
 ACFLAGS+= -D__ASSEMBLY__
 

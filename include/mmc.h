@@ -24,33 +24,10 @@
  * SUCH DAMAGE.
  */
 
-#include <board.h>
-#include <console.h>
-#include <mmc.h>
-#include <omap4/platform.h>
+#ifndef _MMC_H_
+#define _MMC_H_
 
-void
-board_init(void)
-{
-	unsigned int boot_device;
-	int ret = 0;
+int mmc_init(int slot);
+int mmc_read(int slot, unsigned int src, unsigned char *dst, int size);
 
-	board_setup();
-	console_init();
-
-	boot_device = get_boot_device();
-	switch (boot_device) {
-	case 0x05:
-		ret = mmc_init(0);
-		break;
-	case 0x06:
-		ret = mmc_init(1);
-		break;
-	default:
-		ret = -1;
-	}
-
-	if (ret != 0)
-		printf("mmc init failed\n");
-
-}
+#endif /* _MMC_H_ */

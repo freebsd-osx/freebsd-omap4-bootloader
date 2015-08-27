@@ -26,7 +26,10 @@
 
 #include <sys/types.h>
 
+void platform_init(void);
 void sdelay(unsigned long loops);
+
 uint32_t omap_revision(void);
 uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr, uint32_t bound);
-void platform_init(void);
+
+unsigned int get_boot_device(void);
