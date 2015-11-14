@@ -37,6 +37,6 @@ void serial_init(void);
 void serial_puts(const char *s);
 
 void sdelay(unsigned long loops);
-uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr, uint32_t bound);
+uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr);
 
 #endif /* !_BOOT_H_ */

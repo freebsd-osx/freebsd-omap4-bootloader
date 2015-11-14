@@ -28,7 +28,22 @@
 #include <io.h>
 #include <omap4/hw.h>
 
-#define LDELAY      12000000
+static void
+enable_all_clocks(void)
+{
+	/* UART clocks */
+	clrsetbits32(CM_L4PER_UART1_CLKCTRL, 0xffffffff, 0x2);
+	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART1_CLKCTRL);
+
+	clrsetbits32(CM_L4PER_UART2_CLKCTRL, 0xffffffff, 0x2);
+	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART2_CLKCTRL);
+
+	clrsetbits32(CM_L4PER_UART3_CLKCTRL, 0xffffffff, 0x2);
+	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART3_CLKCTRL);
+
+	clrsetbits32(CM_L4PER_UART4_CLKCTRL, 0xffffffff, 0x2);
+	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART4_CLKCTRL);
+}
 
 void
 clock_init(void)
@@ -41,14 +56,6 @@ clock_init(void)
 	if (!clksel)
 		return;
 
-	/* UART clocks */
-	clrsetbits32(CM_L4PER_UART1_CLKCTRL, 0xffffffff, 0x2);
-	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART1_CLKCTRL, LDELAY);
-	clrsetbits32(CM_L4PER_UART2_CLKCTRL, 0xffffffff, 0x2);
-	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART2_CLKCTRL, LDELAY);
-	clrsetbits32(CM_L4PER_UART3_CLKCTRL, 0xffffffff, 0x2);
-	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART3_CLKCTRL, LDELAY);
-	clrsetbits32(CM_L4PER_UART4_CLKCTRL, 0xffffffff, 0x2);
-	wait_on(bitset(17) | bitset(16), 0, CM_L4PER_UART4_CLKCTRL, LDELAY);
+	enable_all_clocks();
 }
 

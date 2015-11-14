@@ -27,18 +27,20 @@
 #include <boot1.h>
 #include <io.h>
 
+#define LOOP	2000
 uint32_t
-wait_on(uint32_t mask, uint32_t value, uint32_t addr, uint32_t bound)
+wait_on(uint32_t mask, uint32_t value, uint32_t addr)
 {
 	uint32_t i = 0, val;
-	do {
+	while (1) {
 		++i;
 		val = readl(addr) & mask;
 		if (val == value)
 			return (1);
-		if (i == bound)
+		if (i == LOOP)
 			return (0);
-	} while (1);
+	}
+	return (0);
 }
 
 void
