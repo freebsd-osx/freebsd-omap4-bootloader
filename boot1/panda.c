@@ -30,7 +30,7 @@
 #include <omap4/hw.h>
 #include <omap4/padconf.h>
 
-unsigned uart_base = OMAP44XX_UART3;
+unsigned console = OMAP44XX_UART3;
 
 void mux_init(void)
 {

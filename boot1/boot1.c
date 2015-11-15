@@ -29,8 +29,6 @@
 #include <boot1.h>
 #include <omap4/hw.h>
 
-unsigned console = OMAP44XX_UART3;
-
 void
 boot1(void)
 {
