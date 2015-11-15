@@ -9,6 +9,9 @@ FILES= boot1.bin MLO
 
 SRCS= start.S boot1.c panda.c
 
+.PATH: ${.CURDIR}/../common
+SRCS+= printf.c
+
 MAN=
 
 #ACFLAGS+= -D__ASSEMBLY__
@@ -25,8 +28,8 @@ LDADD=		${LIBOMAP4}
 
 HOST_CC?= /usr/bin/cc
 
-vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
-	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
+#vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
+#	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
 
 MLO: ${PROG} signGP
 	./signGP boot1.bin ${TEXT_BASE}

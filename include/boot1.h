@@ -34,7 +34,9 @@ void mux_init(void);
 void clock_init(void);
 
 void serial_init(void);
-void serial_puts(const char *s);
+int serial_putc(char c);
+
+int printf(const char *fmt, ...);
 
 void sdelay(unsigned long loops);
 uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr);
