@@ -24,31 +24,12 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _BOOT_H_
-#define _BOOT_H_
+#include <boot1.h>
+#include <io.h>
+#include <omap4/hw.h>
 
-#include <sys/types.h>
-#include <machine/stdarg.h>
-
-void mux_init(void);
-void clock_init(void);
-
-void serial_init(void);
-void serial_puts(const char *s);
-
-void sdelay(unsigned long loops);
-uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr);
-
-int get_omap_rev(void);
-
-#define OMAP_4430_ES1_0		0x0B85202F
-#define OMAP_4430_ES2_0		0x1B85202F
-#define OMAP_4430_ES2_1		0x3B95C02F
-#define OMAP_4430_ES2_2		0x4B95C02F
-#define OMAP_4430_ES2_3		0x6B95C02F
-#define OMAP_4460_ES1_0		0x0B94E02F
-#define OMAP_4460_ES1_1		0x2B94E02F
-#define OMAP_4470_ES1_0		0x0B97502F
-#define OMAP_REV_INVALID	0x00000000
-
-#endif /* !_BOOT_H_ */
+int
+get_omap_rev(void)
+{
+	return (readl(CONTROL_ID_CODE));
+}

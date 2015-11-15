@@ -40,5 +40,8 @@ boot1(void)
 
 	serial_puts("boot1\n");
 	serial_puts("MLO\n");
+
+	if (get_omap_rev() == OMAP_4460_ES1_1)
+		serial_puts("OMAP_4460_ES1_1\n");
 }
 

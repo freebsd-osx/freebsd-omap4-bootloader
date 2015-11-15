@@ -4,7 +4,7 @@ LIB=		omap4
 INTERNALLIB=
 WARNS?=		2
 
-SRCS+= clock.c syslib.c serial.c
+SRCS+= clock.c syslib.c serial.c id.c
 
 CFLAGS+= -D_STANDALONE
 CFLAGS+= -I${.CURDIR}/../include/ \

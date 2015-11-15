@@ -259,7 +259,4 @@ void mux_init(void)
 	mux(CONTROL_WKUP_PAD1_SYS_PWRON_RESET, (M3));	/* gpio_wk29 */
 	mux(CONTROL_WKUP_PAD0_SYS_BOOT6, (IEN | M3));	/* gpio_wk9 */
 	mux(CONTROL_WKUP_PAD1_SYS_BOOT7, (IEN | M3));	/* gpio_wk10 */
-
-	/* OMAP4460 TPS controlling */
-	writew(M3, CONTROL_WKUP_PAD1_FREF_CLK4_REQ);
 }
