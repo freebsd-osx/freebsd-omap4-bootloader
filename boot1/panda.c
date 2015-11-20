@@ -32,7 +32,8 @@
 
 unsigned console = OMAP44XX_UART3;
 
-void mux_init(void)
+void
+mux_init(void)
 {
 	mux(CONTROL_PADCONF_GPMC_AD0, (PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1));	/* sdmmc2_dat0 */
 	mux(CONTROL_PADCONF_GPMC_AD1, (PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1));	/* sdmmc2_dat1 */
@@ -259,4 +260,81 @@ void mux_init(void)
 	mux(CONTROL_WKUP_PAD1_SYS_PWRON_RESET, (M3));	/* gpio_wk29 */
 	mux(CONTROL_WKUP_PAD0_SYS_BOOT6, (IEN | M3));	/* gpio_wk9 */
 	mux(CONTROL_WKUP_PAD1_SYS_BOOT7, (IEN | M3));	/* gpio_wk10 */
+}
+
+static struct ddr_regs elpida2G_400_mhz_2cs = {
+	/* tRRD changed from 10ns to 12.5ns because of the tFAW requirement*/
+	.tim1		= 0x10eb0662,
+	.tim2		= 0x20370dd2,
+	.tim3		= 0x00b1c33f,
+	.phy_ctrl_1	= 0x849FF408,
+	.ref_ctrl	= 0x00000618,
+	.config_init	= 0x80000eb9,
+	.config_final	= 0x80001ab9,
+	.zq_config	= 0xD00b3215,
+	.mr1		= 0x83,
+	.mr2		= 0x4
+};
+
+static struct ddr_regs elpida4G_466_mhz_1cs = {
+	.tim1		= 0x130F376B,
+	.tim2		= 0x3041105A,
+	.tim3		= 0x00F543CF,
+	.phy_ctrl_1	= 0x449FF37B,
+	.ref_ctrl	= 0x0000071B,
+	.config_init	= 0x80800eb2,
+	.config_final	= 0x80801EB2,
+	.zq_config	= 0x500b3215,
+	.mr1		= 0x83,
+	.mr2		= 0x5
+};
+
+void
+sdram_init(void)
+{
+	int omap_rev;
+	const struct ddr_regs *ddr_regs = 0;
+
+	/* 1GB, 128B interleaved */
+	writel(0x80640300, DMM_BASE + DMM_LISA_MAP_0);
+	writel(0x00000000, DMM_BASE + DMM_LISA_MAP_2);
+	writel(0xFF020100, DMM_BASE + DMM_LISA_MAP_3);
+
+	omap_rev = get_omap_rev();
+	switch (omap_rev) {
+	case OMAP_4430_ES2_2:
+	case OMAP_4430_ES2_3:
+		ddr_regs = &elpida2G_400_mhz_2cs;
+		break;
+	case OMAP_4460_ES1_0:
+	case OMAP_4460_ES1_1:
+		writel(0x80640300, MA_BASE + DMM_LISA_MAP_0);
+		elpida2G_400_mhz_2cs.phy_ctrl_1	= 0x449FF408;
+		ddr_regs = &elpida2G_400_mhz_2cs;
+		break;
+	case OMAP_4470_ES1_0:
+		writel(0x80640300, MA_BASE + DMM_LISA_MAP_3);
+		ddr_regs = &elpida4G_466_mhz_1cs;
+		break;
+	case OMAP_REV_INVALID:
+	default:
+		printf("unsupported OMAP4 revision %d", omap_rev);
+	}
+
+	ddr_init(ddr_regs, ddr_regs);
+
+	/*
+	 * Pull Dn enabled for "Weak driver control" on LPDDR
+	 * Interface.
+	 */
+	if (omap_rev >= OMAP_4460_ES1_0) {
+		writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_0);
+		writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_1);
+		writel(0x9c989c00, CONTROL_LPDDR2IO1_2);
+		writel(0xa0888c03, CONTROL_LPDDR2IO1_3);
+		writel(0x9c9c9c9c, CONTROL_LPDDR2IO2_0);
+		writel(0x9c9c9c9c, CONTROL_LPDDR2IO2_1);
+		writel(0x9c989c00, CONTROL_LPDDR2IO2_2);
+		writel(0xa0888c03, CONTROL_LPDDR2IO2_3);
+	}
 }

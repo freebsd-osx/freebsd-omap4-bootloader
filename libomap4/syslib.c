@@ -29,7 +29,7 @@
 
 #define LOOP	2000
 uint32_t
-wait_on(uint32_t mask, uint32_t value, uint32_t addr)
+poll(uint32_t mask, uint32_t value, uint32_t addr)
 {
 	uint32_t i = 0, val;
 	while (1) {

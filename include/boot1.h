@@ -32,16 +32,34 @@
 
 void mux_init(void);
 void clock_init(void);
-
+void sdram_init(void);
 void serial_init(void);
-int serial_putc(char c);
 
+int serial_putc(char c);
 int printf(const char *fmt, ...);
 
 void sdelay(unsigned long loops);
-uint32_t wait_on(uint32_t mask, uint32_t value, uint32_t addr);
+uint32_t poll(uint32_t mask, uint32_t value, uint32_t addr);
 
 int get_omap_rev(void);
+
+/* structure for ddr timings */
+struct ddr_regs {
+	uint32_t tim1;
+	uint32_t tim2;
+	uint32_t tim3;
+	uint32_t phy_ctrl_1;
+	uint32_t ref_ctrl;
+	uint32_t config_init;
+	uint32_t config_final;
+	uint32_t zq_config;
+	uint8_t mr1;
+	uint8_t mr2;
+};
+
+void ddr_init(const struct ddr_regs *ddr1, const struct ddr_regs *ddr2);
+void configure_core_dpll_no_lock(void);
+void lock_core_dpll_shadow(void);
 
 #define OMAP_4430_ES1_0		0x0B85202F
 #define OMAP_4430_ES2_0		0x1B85202F

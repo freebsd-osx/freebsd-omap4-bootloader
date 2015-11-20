@@ -29,17 +29,43 @@
 #include <boot1.h>
 #include <omap4/hw.h>
 
+void memtest(void *x, unsigned count)
+{
+	unsigned *w = x;
+	unsigned n;
+	count /= 4;
+
+	printf("memtest write - %d\n", count);
+	for (n = 0; n < count; n++) {
+		unsigned chk = 0xa5a5a5a5 ^ n;
+		w[n] = chk;
+	}
+	printf("memtest read\n");
+	for (n = 0; n < count; n++) {
+		unsigned chk = 0xa5a5a5a5 ^ n;
+		if (w[n] != chk) {
+			printf("ERROR @ %x (%x != %x)\n",
+				(unsigned) (w+n), w[n], chk);
+			return;
+		}
+	}
+	printf("OK!\n");
+}
+
 void
 boot1(void)
 {
 	mux_init();
 	clock_init();
 	serial_init();
+	sdram_init();
 
 	printf("boot1\n");
 	printf("MLO\n");
 
+	memtest((void *)0x82000000, 8*1024*1024);
+	memtest((void *)0xA0208000, 8*1024*1024);
+
 	if (get_omap_rev() == OMAP_4460_ES1_1)
 		printf("OMAP_4460_ES1_1\n");
 }
-

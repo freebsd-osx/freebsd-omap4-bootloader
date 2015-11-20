@@ -36,13 +36,13 @@
 #define readl(a)	(*((volatile unsigned int *) (a)))
 #define writel(v, a)	(*((volatile unsigned int *) (a)) = (v))
 
-#define clrbits32(addr, clear) \
+#define clrbits(addr, clear) \
 	writel((readl(addr) & ~(clear)), (addr))
 
-#define setbits32(addr, set) \
+#define setbits(addr, set) \
 	writel((readl(addr) | (set)), (addr))
 
-#define clrsetbits32(addr, clear, set) \
+#define clrsetbits(addr, clear, set) \
 	writel((readl(addr) & ~(clear)) | (set), (addr))
 
 #define bitset(n)	(1 << n)
