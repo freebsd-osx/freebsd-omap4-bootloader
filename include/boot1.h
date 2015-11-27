@@ -30,18 +30,23 @@
 #include <sys/types.h>
 #include <machine/stdarg.h>
 
-void mux_init(void);
-void clock_init(void);
-void sdram_init(void);
-void serial_init(void);
+void	mux_init(void);
+void	clock_init(void);
+void	scale_vcores(void);
+void	sdram_init(void);
+void	serial_init(void);
 
-int serial_putc(char c);
-int printf(const char *fmt, ...);
+int	serial_putc(char c);
+int	printf(const char *fmt, ...);
 
-void sdelay(unsigned long loops);
-uint32_t poll(uint32_t mask, uint32_t value, uint32_t addr);
+#ifdef DEBUG
+#define dbg(x...) printf(x)
+#else
+#define dbg(x...)
+#endif /* !DEBUG */
 
-int get_omap_rev(void);
+void		sdelay(unsigned long loops);
+uint32_t	poll(uint32_t mask, uint32_t value, uint32_t addr);
 
 /* structure for ddr timings */
 struct ddr_regs {
@@ -57,18 +62,20 @@ struct ddr_regs {
 	uint8_t mr2;
 };
 
-void ddr_init(const struct ddr_regs *ddr1, const struct ddr_regs *ddr2);
-void configure_core_dpll_no_lock(void);
-void lock_core_dpll_shadow(void);
+void	ddr_init(const struct ddr_regs *ddr1, const struct ddr_regs *ddr2);
+void	configure_core_dpll_no_lock(void);
+void	lock_core_dpll_shadow(void);
 
-#define OMAP_4430_ES1_0		0x0B85202F
-#define OMAP_4430_ES2_0		0x1B85202F
-#define OMAP_4430_ES2_1		0x3B95C02F
-#define OMAP_4430_ES2_2		0x4B95C02F
-#define OMAP_4430_ES2_3		0x6B95C02F
-#define OMAP_4460_ES1_0		0x0B94E02F
-#define OMAP_4460_ES1_1		0x2B94E02F
-#define OMAP_4470_ES1_0		0x0B97502F
-#define OMAP_REV_INVALID	0x00000000
+int	get_omap_rev(void);
+
+#define OMAP4430_ES1_0	0x0B85202F
+#define OMAP4430_ES2_0	0x1B85202F
+#define OMAP4430_ES2_1	0x3B95C02F
+#define OMAP4430_ES2_2	0x4B95C02F
+#define OMAP4430_ES2_3	0x6B95C02F
+#define OMAP4460_ES1_0	0x0B94E02F
+#define OMAP4460_ES1_1	0x2B94E02F
+#define OMAP4470_ES1_0	0x0B97502F
+#define REV_INVALID	0x00000000
 
 #endif /* !_BOOT_H_ */

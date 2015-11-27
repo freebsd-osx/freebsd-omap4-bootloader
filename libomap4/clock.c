@@ -83,16 +83,16 @@ configure_mpu_dpll(struct dpll_param *dpll_param)
 
 	/* Unlock the MPU dpll */
 	clrsetbits(CM_CLKMODE_DPLL_MPU, 0x00000007, PLL_MN_POWER_BYPASS);
-	poll(bitset(0), 0, CM_IDLEST_DPLL_MPU);
+	poll(0x0, 0, CM_IDLEST_DPLL_MPU);
 
 	omap_rev = get_omap_rev();
-	if (omap_rev >= OMAP_4470_ES1_0) {
+	if (omap_rev >= OMAP4470_ES1_0) {
 		/*
 		 * Same M, N as for 800 MHz from M2 output will
 		 * give 1600 MHz from M3 output
 		 */
 		dpll_param = &mpu_dpll_param_800mhz;
-	} else if (omap_rev >= OMAP_4460_ES1_0) {
+	} else if (omap_rev >= OMAP4460_ES1_0) {
 		/*
 		 * Same M, N as for 700 MHz from M2 output will
 		 * give 1400 MHz from M3 output
@@ -106,7 +106,7 @@ configure_mpu_dpll(struct dpll_param *dpll_param)
 		clrsetbits(CM_MPU_MPU_CLKCTRL, 0x02000000, abe_div_8 << 25);
 
 		dcc_en = 0;
-		/* Enable / disable DCC on 4460 */
+		/* disable DCC on 4460 */
 		clrsetbits(CM_CLKSEL_DPLL_MPU, 0x00400000, dcc_en << 22);
 	}
 
@@ -121,7 +121,7 @@ configure_mpu_dpll(struct dpll_param *dpll_param)
 
 	/* Lock the mpu dpll */
 	clrsetbits(CM_CLKMODE_DPLL_MPU, 0x00000007, (PLL_LOCK | 10));
-	poll(bitset(0), 1, CM_IDLEST_DPLL_MPU);
+	poll(0x0, 1, CM_IDLEST_DPLL_MPU);
 }
 
 static void
@@ -129,8 +129,7 @@ configure_iva_dpll(struct dpll_param *dpll_param)
 {
 	/* Unlock the IVA dpll */
 	clrsetbits(CM_CLKMODE_DPLL_IVA, 0x00000007, PLL_MN_POWER_BYPASS);
-
-	poll(bitset(0), 0, CM_IDLEST_DPLL_IVA);
+	poll(0x0, 0, CM_IDLEST_DPLL_IVA);
 
 	/* CM_BYPCLK_DPLL_IVA = CORE_X2_CLK/2 */
 	clrsetbits(CM_BYPCLK_DPLL_IVA, 0x00000003, 0x1);
@@ -148,7 +147,7 @@ configure_iva_dpll(struct dpll_param *dpll_param)
 
 	/* Lock the iva dpll */
 	clrsetbits(CM_CLKMODE_DPLL_IVA, 0x00000007, PLL_LOCK);
-	poll(bitset(0), 1, CM_IDLEST_DPLL_IVA);
+	poll(0x0, 1, CM_IDLEST_DPLL_IVA);
 }
 
 static void
@@ -156,7 +155,7 @@ configure_per_dpll(const struct dpll_param *dpll_param)
 {
 	/* Unlock the PER dpll */
 	clrsetbits(CM_CLKMODE_DPLL_PER, 0x00000007, PLL_MN_POWER_BYPASS);
-	poll(bitset(0), 0, CM_IDLEST_DPLL_PER);
+	poll(0x0, 0, CM_IDLEST_DPLL_PER);
 
 	/* Disable autoidle */
 	clrsetbits(CM_AUTOIDLE_DPLL_PER, 0x00000007, 0x0);
@@ -177,7 +176,7 @@ configure_per_dpll(const struct dpll_param *dpll_param)
 
 	/* Lock the per dpll */
 	clrsetbits(CM_CLKMODE_DPLL_PER, 0x00000007, PLL_LOCK);
-	poll(bitset(0), 1, CM_IDLEST_DPLL_PER);
+	poll(0x0, 1, CM_IDLEST_DPLL_PER);
 }
 
 static void
@@ -188,7 +187,7 @@ configure_abe_dpll(struct dpll_param *dpll_param)
 
 	/* Unlock the ABE dpll */
 	clrsetbits(CM_CLKMODE_DPLL_ABE, 0x00000007, PLL_MN_POWER_BYPASS);
-	poll(bitset(0), 0, CM_IDLEST_DPLL_ABE);
+	poll(0x0, 0, CM_IDLEST_DPLL_ABE);
 
 	/* Disable autoidle */
 	clrsetbits(CM_AUTOIDLE_DPLL_ABE, 0x00000007, 0x0);
@@ -197,29 +196,29 @@ configure_abe_dpll(struct dpll_param *dpll_param)
 	clrsetbits(CM_CLKSEL_DPLL_ABE, 0x0000002f, dpll_param->n);
 
 	/* Force DPLL CLKOUTHIF to stay enabled */
-	clrsetbits(CM_DIV_M2_DPLL_ABE, 0x00000000, 0x500);
+	clrsetbits(CM_DIV_M2_DPLL_ABE, 0xffffffff, 0x500);
 	clrsetbits(CM_DIV_M2_DPLL_ABE, 0x0000001f, dpll_param->m2);
 	clrsetbits(CM_DIV_M2_DPLL_ABE, 0x00000100, 0x1 << 8);
 
 	/* Force DPLL CLKOUTHIF to stay enabled */
-	clrsetbits(CM_DIV_M3_DPLL_ABE, 0x00000000, 0x100);
+	clrsetbits(CM_DIV_M3_DPLL_ABE, 0xffffffff, 0x100);
 	clrsetbits(CM_DIV_M3_DPLL_ABE, 0x0000001f, dpll_param->m3);
 	clrsetbits(CM_DIV_M3_DPLL_ABE, 0x00000100, 0x1 << 8);
 
 	/* Lock the abe dpll */
 	clrsetbits(CM_CLKMODE_DPLL_ABE, 0x00000007, PLL_LOCK);
-	poll(bitset(0), 1, CM_IDLEST_DPLL_ABE);
+	poll(0x0, 1, CM_IDLEST_DPLL_ABE);
 }
 
 static void
 configure_usb_dpll(struct dpll_param *dpll_param)
 {
 	/* Select the 60Mhz clock 480/8 = 60*/
-	clrsetbits(CM_CLKSEL_USB_60MHz, 0x00000000, 0x1);
+	clrsetbits(CM_CLKSEL_USB_60MHz, 0xffffffff, 0x1);
 
 	/* Unlock the USB dpll */
 	clrsetbits(CM_CLKMODE_DPLL_USB, 0x00000007, PLL_MN_POWER_BYPASS);
-	poll(bitset(0), 0, CM_IDLEST_DPLL_USB);
+	poll(0x0, 0, CM_IDLEST_DPLL_USB);
 
 	/* Disable autoidle */
 	clrsetbits(CM_AUTOIDLE_DPLL_USB, 0x00000007, 0x0);
@@ -227,17 +226,17 @@ configure_usb_dpll(struct dpll_param *dpll_param)
 	clrsetbits(CM_CLKSEL_DPLL_USB, 0x0000003f, dpll_param->n);
 
 	/* Force DPLL CLKOUT to stay active */
-	clrsetbits(CM_DIV_M2_DPLL_USB, 0x00000000, 0x100);
+	clrsetbits(CM_DIV_M2_DPLL_USB, 0xffffffff, 0x100);
 	clrsetbits(CM_DIV_M2_DPLL_USB, 0x0000001f, dpll_param->m2);
 	clrsetbits(CM_DIV_M2_DPLL_USB, 0x00000100, 0x1 << 8);
 	clrsetbits(CM_CLKDCOLDO_DPLL_USB, 0x00000100, 0x1 << 8);
 
 	/* Lock the usb dpll */
 	clrsetbits(CM_CLKMODE_DPLL_USB, 0x00000007, PLL_LOCK);
-	poll(bitset(0), 1, CM_IDLEST_DPLL_USB);
+	poll(0x0, 1, CM_IDLEST_DPLL_USB);
 
 	/* force enable the CLKDCOLDO clock */
-	clrsetbits(CM_CLKDCOLDO_DPLL_USB, 0x00000000, 0x100);
+	clrsetbits(CM_CLKDCOLDO_DPLL_USB, 0xffffffff, 0x100);
 }
 
 void
@@ -247,7 +246,7 @@ configure_core_dpll_no_lock(void)
 	struct dpll_param *dpll_param;
 
 	omap_rev = get_omap_rev();
-	if (omap_rev >= OMAP_4470_ES1_0)
+	if (omap_rev >= OMAP4470_ES1_0)
 	        dpll_param = &core_dpll_param_ddr466mhz;
 	else
 	        dpll_param = &core_dpll_param_ddr400mhz;
@@ -258,31 +257,31 @@ configure_core_dpll_no_lock(void)
 	 */
 	writel(0x7, CM_SYS_CLKSEL);
 
-	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
-	clrsetbits(CM_CLKSEL_CORE, 0x00000000, 0x110);
+	/* CORE_CLK=CORE_X2_CLK, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
+	clrsetbits(CM_CLKSEL_CORE, 0xffffffff, 0x110);
 
 	/* Unlock the CORE dpll */
-	clrsetbits(CM_CLKMODE_DPLL_CORE, 0x00000007, PLL_MN_POWER_BYPASS);
-	poll(bitset(0), 0, CM_IDLEST_DPLL_CORE);
+	clrsetbits(CM_CLKMODE_DPLL_CORE, 0x7, PLL_MN_POWER_BYPASS);
+	poll(0x0, 0, CM_IDLEST_DPLL_CORE);
 
 	/* Disable autoidle */
-	clrsetbits(CM_AUTOIDLE_DPLL_CORE, 0x00000007, 0x0);
-	clrsetbits(CM_CLKSEL_DPLL_CORE, 0x0007ff00, dpll_param->m << 8);
-	clrsetbits(CM_CLKSEL_DPLL_CORE, 0x0000003f, dpll_param->n);
-	clrsetbits(CM_DIV_M2_DPLL_CORE, 0x0000001f, dpll_param->m2);
-	clrsetbits(CM_DIV_M3_DPLL_CORE, 0x0000001f, dpll_param->m3);
-	clrsetbits(CM_DIV_M4_DPLL_CORE, 0x0000001f, dpll_param->m4);
-	clrsetbits(CM_DIV_M5_DPLL_CORE, 0x0000001f, dpll_param->m5);
-	clrsetbits(CM_DIV_M6_DPLL_CORE, 0x0000001f, dpll_param->m6);
-	clrsetbits(CM_DIV_M7_DPLL_CORE, 0x0000001f, dpll_param->m7);
+	clrsetbits(CM_AUTOIDLE_DPLL_CORE, 0x7, 0x0);
+	clrsetbits(CM_CLKSEL_DPLL_CORE, 0x7ff00, dpll_param->m << 8);
+	clrsetbits(CM_CLKSEL_DPLL_CORE, 0x3f, dpll_param->n);
+	clrsetbits(CM_DIV_M2_DPLL_CORE, 0x1f, dpll_param->m2);
+	clrsetbits(CM_DIV_M3_DPLL_CORE, 0x1f, dpll_param->m3);
+	clrsetbits(CM_DIV_M4_DPLL_CORE, 0x1f, dpll_param->m4);
+	clrsetbits(CM_DIV_M5_DPLL_CORE, 0x1f, dpll_param->m5);
+	clrsetbits(CM_DIV_M6_DPLL_CORE, 0x1f, dpll_param->m6);
+	clrsetbits(CM_DIV_M7_DPLL_CORE, 0x1f, dpll_param->m7);
 }
 
 void
 lock_core_dpll(void)
 {
 	/* Lock the core dpll */
-	clrsetbits(CM_CLKMODE_DPLL_CORE, 0x00000007, PLL_LOCK);
-	poll(bitset(0), 1, CM_IDLEST_DPLL_CORE);
+	clrsetbits(CM_CLKMODE_DPLL_CORE, 0x7, PLL_LOCK);
+	poll(0x0, 1, CM_IDLEST_DPLL_CORE);
 }
 
 void
@@ -290,12 +289,9 @@ lock_core_dpll_shadow(void)
 {
 	int omap_rev;
 	struct dpll_param *dpll_param;
-	uint32_t temp;
-	temp = readl(CM_MEMIF_CLKSTCTRL);
-	temp &= (~3);
-	temp |= 2;
-	writel(temp, CM_MEMIF_CLKSTCTRL);
 
+	/* Put EMIF clock domain in sw wakeup mode */
+	clrsetbits(CM_MEMIF_CLKSTCTRL, 0x3, 0x2);
 	while (readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
 		;
 
@@ -303,108 +299,107 @@ lock_core_dpll_shadow(void)
 		;
 
 	omap_rev = get_omap_rev();
-	if (omap_rev >= OMAP_4470_ES1_0)
+	if (omap_rev >= OMAP4470_ES1_0)
 		dpll_param = &core_dpll_param_ddr466mhz;
 	else
 		dpll_param = &core_dpll_param_ddr400mhz;
 
 	/* Lock the core dpll using freq update method */
-	/* (CM_CLKMODE_DPLL_CORE) */
-	writel(0x0A, 0x4A004120);
+	clrsetbits(CM_CLKMODE_DPLL_CORE, 0x7, PLL_FAST_RELOCK_BYPASS);
 
 	/*
 	 * CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
-	writel(0x70D | (dpll_param->m2 << 11), 0x4A004260);
+	writel(0x70d | (dpll_param->m2 << 11), CM_SHADOW_FREQ_CONFIG1);
 
-	/* Wait for Freq_Update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
-	while ((readl(0x4A004260) & 0x1) == 0x1)
-		;
+	/* Wait for freq update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
+	poll(0x0, 0, CM_SHADOW_FREQ_CONFIG1);
 
 	/* Wait for DPLL to Lock : CM_IDLEST_DPLL_CORE */
-	poll(bitset(0), 1, CM_IDLEST_DPLL_CORE);
+	poll(0x0, 1, CM_IDLEST_DPLL_CORE);
 
+	/* Put EMIF clock domain back in hw auto mode */
+	clrsetbits(CM_MEMIF_CLKSTCTRL, 0x3, 0x3);
 	while (readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
 		;
 
 	while (readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
 		;
 
-	writel(temp | 3, CM_MEMIF_CLKSTCTRL);
 }
 
 static void
 enable_all_clocks(void)
 {
 	/* L4PER clocks */
-	clrsetbits(CM_L4PER_CLKSTCTRL, 0x00000000, 0x2);
-	clrsetbits(CM_L4PER_DMTIMER10_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER10_CLKCTRL);
+	clrsetbits(CM_L4PER_CLKSTCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER10_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER10_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER11_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER11_CLKCTRL);
+	clrsetbits(CM_L4PER_DMTIMER11_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER11_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER2_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER2_CLKCTRL);
+	clrsetbits(CM_L4PER_DMTIMER2_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER3_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER3_CLKCTRL);
+	clrsetbits(CM_L4PER_DMTIMER3_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER4_CLKCTRL);
+	clrsetbits(CM_L4PER_DMTIMER4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER9_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_DMTIMER9_CLKCTRL);
+	clrsetbits(CM_L4PER_DMTIMER9_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_DMTIMER9_CLKCTRL);
 
 	/* GPIO clocks */
-	clrsetbits(CM_L4PER_GPIO2_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_GPIO2_CLKCTRL);
+	clrsetbits(CM_L4PER_GPIO2_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L4PER_GPIO2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO3_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_GPIO3_CLKCTRL);
+	clrsetbits(CM_L4PER_GPIO3_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L4PER_GPIO3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_GPIO4_CLKCTRL);
+	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L4PER_GPIO4_CLKCTRL);
 
 	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0x00000100, 0x1 << 8);
 
-	clrsetbits(CM_L4PER_GPIO5_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_GPIO5_CLKCTRL);
+	clrsetbits(CM_L4PER_GPIO5_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L4PER_GPIO5_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO6_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_GPIO6_CLKCTRL);
+	clrsetbits(CM_L4PER_GPIO6_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L4PER_GPIO6_CLKCTRL);
 
-	clrsetbits(CM_L4PER_HDQ1W_CLKCTRL, 0x00000000, 0x2);
+	clrsetbits(CM_L4PER_HDQ1W_CLKCTRL, 0xffffffff, 0x2);
 
 	/* I2C clocks */
-	clrsetbits(CM_L4PER_I2C1_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_I2C1_CLKCTRL);
+	clrsetbits(CM_L4PER_I2C1_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_I2C1_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C2_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_I2C2_CLKCTRL);
+	clrsetbits(CM_L4PER_I2C2_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_I2C2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C3_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_I2C3_CLKCTRL);
+	clrsetbits(CM_L4PER_I2C3_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_I2C3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_I2C4_CLKCTRL);
+	clrsetbits(CM_L4PER_I2C4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_I2C4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCBSP4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MCBSP4_CLKCTRL);
+	clrsetbits(CM_L4PER_MCBSP4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_MCBSP4_CLKCTRL);
 
 	/* MCSPI clocks */
-	clrsetbits(CM_L4PER_MCSPI1_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MCSPI1_CLKCTRL);
+	clrsetbits(CM_L4PER_MCSPI1_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_MCSPI1_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI2_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MCSPI2_CLKCTRL);
+	clrsetbits(CM_L4PER_MCSPI2_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_MCSPI2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI3_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MCSPI3_CLKCTRL);
+	clrsetbits(CM_L4PER_MCSPI3_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_MCSPI3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MCSPI4_CLKCTRL);
+	clrsetbits(CM_L4PER_MCSPI4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_MCSPI4_CLKCTRL);
 
 	/* MMC clocks */
 	clrsetbits(CM_L3INIT_HSMMC1_CLKCTRL, 0x00000003, 0x2);
@@ -412,71 +407,71 @@ enable_all_clocks(void)
 	clrsetbits(CM_L3INIT_HSMMC2_CLKCTRL, 0x00000003, 0x2);
 	clrsetbits(CM_L3INIT_HSMMC2_CLKCTRL, 0x01000000, 0x1 << 24);
 
-	clrsetbits(CM_L4PER_MMCSD3_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(18) | bitset(17) | bitset(16), 0, CM_L4PER_MMCSD3_CLKCTRL);
+	clrsetbits(CM_L4PER_MMCSD3_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x70000, 0, CM_L4PER_MMCSD3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MMCSD4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(18) | bitset(17) | bitset(16), 0, CM_L4PER_MMCSD4_CLKCTRL);
+	clrsetbits(CM_L4PER_MMCSD4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x70000, 0, CM_L4PER_MMCSD4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MMCSD5_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_MMCSD5_CLKCTRL);
+	clrsetbits(CM_L4PER_MMCSD5_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x70000, 0, CM_L4PER_MMCSD5_CLKCTRL);
 
 	/* UART clocks */
-	clrsetbits(CM_L4PER_UART1_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_UART1_CLKCTRL);
+	clrsetbits(CM_L4PER_UART1_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART1_CLKCTRL);
 
-	clrsetbits(CM_L4PER_UART2_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_UART2_CLKCTRL);
+	clrsetbits(CM_L4PER_UART2_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_UART3_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_UART3_CLKCTRL);
+	clrsetbits(CM_L4PER_UART3_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_UART4_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_L4PER_UART4_CLKCTRL);
+	clrsetbits(CM_L4PER_UART4_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART4_CLKCTRL);
 
 	/* WKUP clocks */
-	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_WKUP_GPIO1_CLKCTRL);
+	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_WKUP_GPIO1_CLKCTRL);
 
-	clrsetbits(CM_WKUP_TIMER1_CLKCTRL, 0x00000000, 0x01000002);
-	poll(bitset(17) | bitset(16), 0, CM_WKUP_TIMER1_CLKCTRL);
+	clrsetbits(CM_WKUP_TIMER1_CLKCTRL, 0xffffffff, 0x01000002);
+	poll(0x30000, 0, CM_WKUP_TIMER1_CLKCTRL);
 
-	clrsetbits(CM_WKUP_KEYBOARD_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_WKUP_KEYBOARD_CLKCTRL);
+	clrsetbits(CM_WKUP_KEYBOARD_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_WKUP_KEYBOARD_CLKCTRL);
 
-	clrsetbits(CM_SDMA_CLKSTCTRL, 0x00000000, 0x0);
-	clrsetbits(CM_MEMIF_CLKSTCTRL, 0x00000000, 0x3);
+	clrsetbits(CM_SDMA_CLKSTCTRL, 0xffffffff, 0x0);
+	clrsetbits(CM_MEMIF_CLKSTCTRL, 0xffffffff, 0x3);
 
-	clrsetbits(CM_MEMIF_EMIF_1_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_MEMIF_EMIF_1_CLKCTRL);
+	clrsetbits(CM_MEMIF_EMIF_1_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_MEMIF_EMIF_1_CLKCTRL);
 
-	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_MEMIF_EMIF_2_CLKCTRL);
+	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_MEMIF_EMIF_2_CLKCTRL);
 
-	clrsetbits(CM_D2D_CLKSTCTRL, 0x00000000, 0x3);
+	clrsetbits(CM_D2D_CLKSTCTRL, 0xffffffff, 0x3);
 
-	clrsetbits(CM_L3_2_GPMC_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L3_2_GPMC_CLKCTRL);
+	clrsetbits(CM_L3_2_GPMC_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L3_2_GPMC_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_L3_3_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L3INSTR_L3_3_CLKCTRL);
+	clrsetbits(CM_L3INSTR_L3_3_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L3INSTR_L3_3_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_L3_INSTR_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L3INSTR_L3_INSTR_CLKCTRL);
+	clrsetbits(CM_L3INSTR_L3_INSTR_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L3INSTR_L3_INSTR_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_OCP_WP1_CLKCTRL, 0x00000000, 0x1);
-	poll(bitset(17) | bitset(16), 0, CM_L3INSTR_OCP_WP1_CLKCTRL);
+	clrsetbits(CM_L3INSTR_OCP_WP1_CLKCTRL, 0xffffffff, 0x1);
+	poll(0x30000, 0, CM_L3INSTR_OCP_WP1_CLKCTRL);
 
 	/* WDT clocks */
-	clrsetbits(CM_WKUP_WDT2_CLKCTRL, 0x00000000, 0x2);
-	poll(bitset(17) | bitset(16), 0, CM_WKUP_WDT2_CLKCTRL);
+	clrsetbits(CM_WKUP_WDT2_CLKCTRL, 0xffffffff, 0x2);
+	poll(0x30000, 0, CM_WKUP_WDT2_CLKCTRL);
 
 	/* Select DPLL PER CLOCK as source for SGX FCLK */
 	clrsetbits(CM_SGX_SGX_CLKCTRL, 0x01000000, 0x1 << 24);
 
 	/* Enable clocks for USB fast boot to work */
-	clrsetbits(CM_L3INIT_USBPHY_CLKCTRL, 0x00000000, 0x301);
-	clrsetbits(CM_L3INIT_HSUSBOTG_CLKCTRL, 0x00000000, 0x1);
+	clrsetbits(CM_L3INIT_USBPHY_CLKCTRL, 0xffffffff, 0x301);
+	clrsetbits(CM_L3INIT_HSUSBOTG_CLKCTRL, 0xffffffff, 0x1);
 }
 
 void

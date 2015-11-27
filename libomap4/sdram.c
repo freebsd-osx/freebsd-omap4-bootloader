@@ -202,7 +202,6 @@ emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 	    base + EMIF_LPDDR2_MODE_REG_CFG);
 	writel(0, base + EMIF_LPDDR2_MODE_REG_DATA);
 	/* LPDDR2 init complete */
-
 }
 
 void
@@ -261,11 +260,13 @@ ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0x00000000, 0x1);
 
 	/* Put the Core Subsystem PD to ON State */
-	writel(0x80000000, EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
-	writel(0x80000000, EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
+	if (omap_rev == OMAP4430_ES1_0) {
+		writel(0x80000000, EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
+		writel(0x80000000, EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
+	}
 
 	omap_rev = get_omap_rev();
-	if (omap_rev >= OMAP_4460_ES1_0) {
+	if (omap_rev >= OMAP4460_ES1_0) {
 		writel(0x0a300000, EMIF1_BASE + EMIF_L3_CONFIG);
 		writel(0x0a300000, EMIF2_BASE + EMIF_L3_CONFIG);
 	} else {

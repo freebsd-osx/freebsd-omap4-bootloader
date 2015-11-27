@@ -260,6 +260,10 @@ mux_init(void)
 	mux(CONTROL_WKUP_PAD1_SYS_PWRON_RESET, (M3));	/* gpio_wk29 */
 	mux(CONTROL_WKUP_PAD0_SYS_BOOT6, (IEN | M3));	/* gpio_wk9 */
 	mux(CONTROL_WKUP_PAD1_SYS_BOOT7, (IEN | M3));	/* gpio_wk10 */
+
+	/* gpio_wk7 is used for TPS controlling */
+	if (get_omap_rev() >= OMAP4460_ES1_0)
+		writew(M3, CONTROL_WKUP_PAD1_FREF_CLK4_REQ);
 }
 
 static struct ddr_regs elpida2G_400_mhz_2cs = {
@@ -267,11 +271,11 @@ static struct ddr_regs elpida2G_400_mhz_2cs = {
 	.tim1		= 0x10eb0662,
 	.tim2		= 0x20370dd2,
 	.tim3		= 0x00b1c33f,
-	.phy_ctrl_1	= 0x849FF408,
+	.phy_ctrl_1	= 0x849ff408,
 	.ref_ctrl	= 0x00000618,
 	.config_init	= 0x80000eb9,
 	.config_final	= 0x80001ab9,
-	.zq_config	= 0xD00b3215,
+	.zq_config	= 0xd00b3215,
 	.mr1		= 0x83,
 	.mr2		= 0x4
 };
@@ -302,21 +306,21 @@ sdram_init(void)
 
 	omap_rev = get_omap_rev();
 	switch (omap_rev) {
-	case OMAP_4430_ES2_2:
-	case OMAP_4430_ES2_3:
+	case OMAP4430_ES2_2:
+	case OMAP4430_ES2_3:
 		ddr_regs = &elpida2G_400_mhz_2cs;
 		break;
-	case OMAP_4460_ES1_0:
-	case OMAP_4460_ES1_1:
+	case OMAP4460_ES1_0:
+	case OMAP4460_ES1_1:
 		writel(0x80640300, MA_BASE + DMM_LISA_MAP_0);
-		elpida2G_400_mhz_2cs.phy_ctrl_1	= 0x449FF408;
+		elpida2G_400_mhz_2cs.phy_ctrl_1	= 0x449ff408;
 		ddr_regs = &elpida2G_400_mhz_2cs;
 		break;
-	case OMAP_4470_ES1_0:
+	case OMAP4470_ES1_0:
 		writel(0x80640300, MA_BASE + DMM_LISA_MAP_3);
 		ddr_regs = &elpida4G_466_mhz_1cs;
 		break;
-	case OMAP_REV_INVALID:
+	case REV_INVALID:
 	default:
 		printf("unsupported OMAP4 revision %d", omap_rev);
 	}
@@ -327,7 +331,7 @@ sdram_init(void)
 	 * Pull Dn enabled for "Weak driver control" on LPDDR
 	 * Interface.
 	 */
-	if (omap_rev >= OMAP_4460_ES1_0) {
+	if (omap_rev >= OMAP4460_ES1_0) {
 		writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_0);
 		writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_1);
 		writel(0x9c989c00, CONTROL_LPDDR2IO1_2);

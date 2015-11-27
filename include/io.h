@@ -45,6 +45,8 @@
 #define clrsetbits(addr, clear, set) \
 	writel((readl(addr) & ~(clear)) | (set), (addr))
 
-#define bitset(n)	(1 << n)
+int		gpio_direction_input(unsigned gpio);
+int		gpio_set_value(unsigned gpio, int enable);
+unsigned	gpio_get_value(unsigned gpio);
 
 #endif /* !_IO_H_ */
