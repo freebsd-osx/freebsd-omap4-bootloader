@@ -30,7 +30,8 @@
 #include <io.h>
 #include <omap4/hw.h>
 
-void memtest(void *x, unsigned count)
+void
+memtest(void *x, unsigned count)
 {
 	unsigned *w = x;
 	unsigned n;
@@ -56,10 +57,14 @@ void memtest(void *x, unsigned count)
 void
 boot1(void)
 {
+	if (warm_reset())
+		force_emif_self_refresh();
+
 	mux_init();
+	enable_uart_clocks();
+	serial_init();
 	scale_vcores();
 	clock_init();
-	serial_init();
 	sdram_init();
 
 	printf("boot1\n");
@@ -67,17 +72,4 @@ boot1(void)
 
 	memtest((void *)0x82000000, 8*1024*1024);
 	memtest((void *)0xA0208000, 8*1024*1024);
-
-	if (get_omap_rev() == OMAP4460_ES1_1)
-		printf("OMAP4460_ES1_1\n");
-
-	/* test gpio */
-	gpio_direction_input(113);
-	while (1) {
-		if (gpio_get_value(113))
-			gpio_set_value(8, 0);
-		else
-			gpio_set_value(8, 1);
-		sdelay(1000);
-	}
 }

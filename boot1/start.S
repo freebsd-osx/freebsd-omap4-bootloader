@@ -28,4 +28,10 @@
 	.globl _start
 _start:
 	bl boot1
+	ldr	sp, sdramstack
+	bic	sp, sp, #7	@ 8-byte alignment for ABI compliance
+	bl main
 	b .
+
+sdramstack:
+	.word 0x83000000

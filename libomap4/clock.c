@@ -333,72 +333,72 @@ static void
 enable_all_clocks(void)
 {
 	/* L4PER clocks */
-	clrsetbits(CM_L4PER_CLKSTCTRL, 0xffffffff, 0x2);
-	clrsetbits(CM_L4PER_DMTIMER10_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_CLKSTCTRL, 0x00000003, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER10_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER10_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER11_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER11_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER11_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER2_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER2_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER3_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER3_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER4_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER4_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_DMTIMER9_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_DMTIMER9_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_DMTIMER9_CLKCTRL);
 
 	/* GPIO clocks */
-	clrsetbits(CM_L4PER_GPIO2_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L4PER_GPIO2_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L4PER_GPIO2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO3_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L4PER_GPIO3_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L4PER_GPIO3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L4PER_GPIO4_CLKCTRL);
 
 	clrsetbits(CM_L4PER_GPIO4_CLKCTRL, 0x00000100, 0x1 << 8);
 
-	clrsetbits(CM_L4PER_GPIO5_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L4PER_GPIO5_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L4PER_GPIO5_CLKCTRL);
 
-	clrsetbits(CM_L4PER_GPIO6_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L4PER_GPIO6_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L4PER_GPIO6_CLKCTRL);
 
-	clrsetbits(CM_L4PER_HDQ1W_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_HDQ1W_CLKCTRL, 0x00000003, 0x2);
 
 	/* I2C clocks */
-	clrsetbits(CM_L4PER_I2C1_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_I2C1_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_I2C1_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C2_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_I2C2_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_I2C2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C3_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_I2C3_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_I2C3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_I2C4_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_I2C4_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_I2C4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCBSP4_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MCBSP4_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_MCBSP4_CLKCTRL);
 
 	/* MCSPI clocks */
-	clrsetbits(CM_L4PER_MCSPI1_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MCSPI1_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_MCSPI1_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI2_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MCSPI2_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_MCSPI2_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI3_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MCSPI3_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_MCSPI3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MCSPI4_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MCSPI4_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_L4PER_MCSPI4_CLKCTRL);
 
 	/* MMC clocks */
@@ -407,63 +407,50 @@ enable_all_clocks(void)
 	clrsetbits(CM_L3INIT_HSMMC2_CLKCTRL, 0x00000003, 0x2);
 	clrsetbits(CM_L3INIT_HSMMC2_CLKCTRL, 0x01000000, 0x1 << 24);
 
-	clrsetbits(CM_L4PER_MMCSD3_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MMCSD3_CLKCTRL, 0x00000003, 0x2);
 	poll(0x70000, 0, CM_L4PER_MMCSD3_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MMCSD4_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MMCSD4_CLKCTRL, 0x00000003, 0x2);
 	poll(0x70000, 0, CM_L4PER_MMCSD4_CLKCTRL);
 
-	clrsetbits(CM_L4PER_MMCSD5_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_L4PER_MMCSD5_CLKCTRL, 0x00000003, 0x2);
 	poll(0x70000, 0, CM_L4PER_MMCSD5_CLKCTRL);
 
-	/* UART clocks */
-	clrsetbits(CM_L4PER_UART1_CLKCTRL, 0xffffffff, 0x2);
-	poll(0x30000, 0, CM_L4PER_UART1_CLKCTRL);
-
-	clrsetbits(CM_L4PER_UART2_CLKCTRL, 0xffffffff, 0x2);
-	poll(0x30000, 0, CM_L4PER_UART2_CLKCTRL);
-
-	clrsetbits(CM_L4PER_UART3_CLKCTRL, 0xffffffff, 0x2);
-	poll(0x30000, 0, CM_L4PER_UART3_CLKCTRL);
-
-	clrsetbits(CM_L4PER_UART4_CLKCTRL, 0xffffffff, 0x2);
-	poll(0x30000, 0, CM_L4PER_UART4_CLKCTRL);
-
 	/* WKUP clocks */
-	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_WKUP_GPIO1_CLKCTRL);
 
-	clrsetbits(CM_WKUP_TIMER1_CLKCTRL, 0xffffffff, 0x01000002);
+	clrsetbits(CM_WKUP_TIMER1_CLKCTRL, 0x00000003, 0x01000002);
 	poll(0x30000, 0, CM_WKUP_TIMER1_CLKCTRL);
 
-	clrsetbits(CM_WKUP_KEYBOARD_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_WKUP_KEYBOARD_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_WKUP_KEYBOARD_CLKCTRL);
 
-	clrsetbits(CM_SDMA_CLKSTCTRL, 0xffffffff, 0x0);
-	clrsetbits(CM_MEMIF_CLKSTCTRL, 0xffffffff, 0x3);
+	clrsetbits(CM_SDMA_CLKSTCTRL, 0x00000003, 0x0);
+	clrsetbits(CM_MEMIF_CLKSTCTRL, 0x00000003, 0x3);
 
-	clrsetbits(CM_MEMIF_EMIF_1_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_MEMIF_EMIF_1_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_MEMIF_EMIF_1_CLKCTRL);
 
-	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_MEMIF_EMIF_2_CLKCTRL);
 
-	clrsetbits(CM_D2D_CLKSTCTRL, 0xffffffff, 0x3);
+	clrsetbits(CM_D2D_CLKSTCTRL, 0x00000003, 0x3);
 
-	clrsetbits(CM_L3_2_GPMC_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L3_2_GPMC_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L3_2_GPMC_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_L3_3_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L3INSTR_L3_3_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L3INSTR_L3_3_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_L3_INSTR_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L3INSTR_L3_INSTR_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L3INSTR_L3_INSTR_CLKCTRL);
 
-	clrsetbits(CM_L3INSTR_OCP_WP1_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L3INSTR_OCP_WP1_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_L3INSTR_OCP_WP1_CLKCTRL);
 
 	/* WDT clocks */
-	clrsetbits(CM_WKUP_WDT2_CLKCTRL, 0xffffffff, 0x2);
+	clrsetbits(CM_WKUP_WDT2_CLKCTRL, 0x00000003, 0x2);
 	poll(0x30000, 0, CM_WKUP_WDT2_CLKCTRL);
 
 	/* Select DPLL PER CLOCK as source for SGX FCLK */
@@ -471,7 +458,27 @@ enable_all_clocks(void)
 
 	/* Enable clocks for USB fast boot to work */
 	clrsetbits(CM_L3INIT_USBPHY_CLKCTRL, 0xffffffff, 0x301);
-	clrsetbits(CM_L3INIT_HSUSBOTG_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_L3INIT_HSUSBOTG_CLKCTRL, 0x00000003, 0x1);
+}
+
+void
+enable_uart_clocks(void)
+{
+	clrsetbits(CM_L4PER_CLKSTCTRL, 0x00000003, 0x2);
+
+	clrsetbits(CM_L4PER_UART1_CLKCTRL, 0x00000003, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART1_CLKCTRL);
+
+	clrsetbits(CM_L4PER_UART2_CLKCTRL, 0x00000003, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART2_CLKCTRL);
+
+	clrsetbits(CM_L4PER_UART3_CLKCTRL, 0x00000003, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART3_CLKCTRL);
+
+	clrsetbits(CM_L4PER_UART4_CLKCTRL, 0x00000003, 0x2);
+	poll(0x30000, 0, CM_L4PER_UART4_CLKCTRL);
+
+	clrsetbits(CM_L4PER_CLKSTCTRL, 0x00000003, 0x3);
 }
 
 void

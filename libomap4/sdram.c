@@ -29,7 +29,6 @@
 #include <boot1.h>
 #include <io.h>
 #include <omap4/hw.h>
-#include <omap4/padconf.h>
 
 #define MR0_ADDR			0
 #define MR1_ADDR			1
@@ -86,6 +85,30 @@
 #define ZQ_CONFIG			0x500b3215
 
 #define CS1_MR(mr)	((mr) | 0x80000000)
+
+void
+force_emif_self_refresh()
+{
+	uint32_t reg;
+
+        reg = readl(EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
+        reg &= ~(0x7 << 8);
+        reg |= 2 << 8;
+        reg &= ~(0xf << 4);
+        writel(reg, EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
+
+        /* dummy read for the new SR_TIM to be loaded */
+        reg = readl(EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
+
+        reg = readl(EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
+        reg &= ~(0x7 << 8);
+        reg |= 2 << 8;
+        reg &= ~(0xf << 4);
+        writel(reg, EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
+
+        /* dummy read for the new SR_TIM to be loaded */
+        reg = readl(EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
+}
 
 void
 reset_phy(unsigned int base)
@@ -208,22 +231,17 @@ void
 ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	 const struct ddr_regs *emif2_ddr_regs)
 {
-	int omap_rev;
+	int rev;
 
 	/* Configure the Control Module DDRIO device */
-        writel(0x7c7c7c7c, CONTROL_LPDDR2IO1_0);
-        writel(0x7c7c7c7c, CONTROL_LPDDR2IO1_1);
-        writel(0x7c787c00, CONTROL_LPDDR2IO1_2);
-        writel(0x7c7c7c7c, CONTROL_LPDDR2IO2_0);
-        writel(0x7c7c7c7c, CONTROL_LPDDR2IO2_1);
-        writel(0x7c787c00, CONTROL_LPDDR2IO2_2);
-
-	/*
-         * Adjust Internal Vref controls to reduce leakage
-         * for chip retention (Core OSWR)
-         */
-        writel(0xa388bc03, CONTROL_LPDDR2IO1_3);
-        writel(0xa388bc03, CONTROL_LPDDR2IO2_3);
+	writel(0x7c7c7c7c, CONTROL_LPDDR2IO1_0);
+	writel(0x7c7c7c7c, CONTROL_LPDDR2IO1_1);
+	writel(0x7c787c00, CONTROL_LPDDR2IO1_2);
+	writel(0xa0888C0f, CONTROL_LPDDR2IO1_3);
+	writel(0x7c7c7c7c, CONTROL_LPDDR2IO2_0);
+	writel(0x7c7c7c7c, CONTROL_LPDDR2IO2_1);
+	writel(0x7c787c00, CONTROL_LPDDR2IO2_2);
+	writel(0xa0888C0f, CONTROL_LPDDR2IO1_3);
 
 	/*
 	 * DDR needs to be initialised @ 19.2 MHz
@@ -260,13 +278,13 @@ ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	clrsetbits(CM_MEMIF_EMIF_2_CLKCTRL, 0x00000000, 0x1);
 
 	/* Put the Core Subsystem PD to ON State */
-	if (omap_rev == OMAP4430_ES1_0) {
+	if (rev == OMAP4430_ES1_0) {
 		writel(0x80000000, EMIF1_BASE + EMIF_PWR_MGMT_CTRL);
 		writel(0x80000000, EMIF2_BASE + EMIF_PWR_MGMT_CTRL);
 	}
 
-	omap_rev = get_omap_rev();
-	if (omap_rev >= OMAP4460_ES1_0) {
+	rev = get_omap_rev();
+	if (rev >= OMAP4460_ES1_0) {
 		writel(0x0a300000, EMIF1_BASE + EMIF_L3_CONFIG);
 		writel(0x0a300000, EMIF2_BASE + EMIF_L3_CONFIG);
 	} else {

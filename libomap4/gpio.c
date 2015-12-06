@@ -91,9 +91,9 @@ gpio_get_value(unsigned gpio)
 	/* determine if this gpio is configured as an input or output */
 	if (bit & readl(base + GPIO_OE)) {
 		/* pin is configured as an input */
-		return (bit & readl(base + GPIO_DATAIN)) ? 1 : 0;
+		return ((bit & readl(base + GPIO_DATAIN)) ? 1 : 0);
 	} else {
 		/* pin is configured as an output */
-		return (bit & readl(base + GPIO_DATAOUT)) ? 1 : 0;
+		return ((bit & readl(base + GPIO_DATAOUT)) ? 1 : 0);
 	}
 }

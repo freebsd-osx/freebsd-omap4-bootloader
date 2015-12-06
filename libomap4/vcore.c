@@ -25,7 +25,6 @@
  */
 
 #include <sys/types.h>
-
 #include <boot1.h>
 #include <io.h>
 #include <omap4/hw.h>
@@ -47,9 +46,9 @@ omap_vc_init(uint8_t hscll, uint8_t hsclh, uint8_t scll, uint8_t sclh)
 	sclh &= PRM_VC_CFG_I2C_CLK_SCLH_MASK;
 
 	val = hscll << PRM_VC_CFG_I2C_CLK_HSCLL_SHIFT |
-	    hsclh << PRM_VC_CFG_I2C_CLK_HSCLH_SHIFT |
-	    scll << PRM_VC_CFG_I2C_CLK_SCLL_SHIFT |
-	    sclh << PRM_VC_CFG_I2C_CLK_SCLH_SHIFT;
+	      hsclh << PRM_VC_CFG_I2C_CLK_HSCLH_SHIFT |
+	      scll << PRM_VC_CFG_I2C_CLK_SCLL_SHIFT |
+	      sclh << PRM_VC_CFG_I2C_CLK_SCLH_SHIFT;
 	writel(val, PRM_VC_CFG_I2C_CLK);
 }
 
@@ -75,8 +74,8 @@ omap_vc_bypass_send_value(uint8_t addr, uint8_t reg_addr, uint8_t reg_data)
 
 	/* program VC to send data */
 	reg_val = addr << PRM_VC_VAL_BYPASS_SLAVEADDR_SHIFT |
-	    reg_addr << PRM_VC_VAL_BYPASS_REGADDR_SHIFT |
-	    reg_data << PRM_VC_VAL_BYPASS_DATA_SHIFT;
+		  reg_addr << PRM_VC_VAL_BYPASS_REGADDR_SHIFT |
+		  reg_data << PRM_VC_VAL_BYPASS_DATA_SHIFT;
 	writel(reg_val, PRM_VC_VAL_BYPASS);
 
 	/* Signal VC to send data */
@@ -85,7 +84,7 @@ omap_vc_bypass_send_value(uint8_t addr, uint8_t reg_addr, uint8_t reg_data)
 	/* Wait on VC to complete transmission */
 	do {
 		reg_val = readl(PRM_VC_VAL_BYPASS) &
-		    PRM_VC_VAL_BYPASS_VALID_BIT;
+				PRM_VC_VAL_BYPASS_VALID_BIT;
 		if (!reg_val)
 			break;
 
@@ -98,33 +97,28 @@ omap_vc_bypass_send_value(uint8_t addr, uint8_t reg_addr, uint8_t reg_data)
 
 	/* In case we can do something about it in future.. */
 	if (!timeout)
-		return -1;
+		return (-1);
 
 	/* All good.. */
-	return 0;
+	return (0);
 }
 
 static void
 scale_tps62361(uint32_t reg, uint32_t val)
 {
-	uint32_t l = 0;
-
 	/*
 	 * Select SET1 in TPS62361:
 	 * VSEL1 is grounded on board. So the following selects
 	 * VSEL1 = 0 and VSEL0 = 1
 	 */
 
-	/* set GPIO-7 direction as output */
-	l = readl(0x4a310134);
-	l &= ~(1 << TPS62361_VSEL0_GPIO);
-	writel(l, 0x4a310134);
+	/* set GPIO-7 data-out 0 */
+	gpio_set_value(TPS62361_VSEL0_GPIO, 0);
 
 	omap_vc_bypass_send_value(TPS62361_I2C_SLAVE_ADDR, reg, val);
 
-	/* set GPIO-7 data-out */
-	l = 1 << TPS62361_VSEL0_GPIO;
-	writel(l, 0x4a310194);
+	/* set GPIO-7 data-out 1 */
+	gpio_set_value(TPS62361_VSEL0_GPIO, 1);
 }
 
 /**
@@ -167,10 +161,10 @@ scale_vcore_omap4460(unsigned int rev)
 
 	/* vdd_core - TWL6030 VCORE 1 - OPP100 - 1.127V */
 	omap_vc_bypass_send_value(TWL6030_SRI2C_SLAVE_ADDR,
-				  TWL6030_SRI2C_REG_ADDR_VCORE1, 0x22);
+				TWL6030_SRI2C_REG_ADDR_VCORE1, 0x22);
 
 	/* WKUP clocks */
-	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0xffffffff, 0x1);
+	clrsetbits(CM_WKUP_GPIO1_CLKCTRL, 0x00000003, 0x1);
 	poll(0x30000, 0, CM_WKUP_GPIO1_CLKCTRL);
 
 	/* vdd_mpu - TPS62361 - OPP100 - 1.210V (roundup from 1.2V) */
@@ -181,7 +175,7 @@ scale_vcore_omap4460(unsigned int rev)
 
 	/* vdd_iva - TWL6030 VCORE 2 - OPP50  - 0.950V */
 	omap_vc_bypass_send_value(TWL6030_SRI2C_SLAVE_ADDR,
-				  TWL6030_SRI2C_REG_ADDR_VCORE2, 0x14);
+				TWL6030_SRI2C_REG_ADDR_VCORE2, 0x14);
 }
 
 /**
@@ -209,9 +203,10 @@ scale_vcore_omap4470(unsigned int rev)
 void
 scale_vcores(void)
 {
-	unsigned int omap_rev;
+	unsigned int rev;
 
-	omap_rev = get_omap_rev();
+	rev = get_omap_rev();
+
 	/*
 	 * Dont use HSMODE, scll=0x60, sclh=0x26
 	 * Note on HSMODE = 0:
@@ -225,10 +220,10 @@ scale_vcores(void)
 	 */
 	omap_vc_init(0x00, 0x00, 0x60, 0x26);
 
-	if (omap_rev >= OMAP4470_ES1_0)
-		scale_vcore_omap4470(omap_rev);
-	else if (omap_rev >= OMAP4460_ES1_0)
-		scale_vcore_omap4460(omap_rev);
+	if (rev >= OMAP4470_ES1_0)
+		scale_vcore_omap4470(rev);
+	else if (rev >= OMAP4460_ES1_0)
+		scale_vcore_omap4460(rev);
 	else	/* Default OMAP4430 */
-		scale_vcore_omap4430(omap_rev);
+		scale_vcore_omap4430(rev);
 }
