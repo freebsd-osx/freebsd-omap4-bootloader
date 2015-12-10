@@ -10,7 +10,7 @@ FILES= boot1.bin MLO
 SRCS= start.S boot1.c panda.c
 
 .PATH: ${.CURDIR}/../common
-SRCS+= printf.c main.c
+SRCS+= main.c printf.c util.c
 
 MAN=
 

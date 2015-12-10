@@ -24,50 +24,94 @@
  * SUCH DAMAGE.
  */
 
-#include <boot1.h>
-#include <io.h>
-#include <omap4/hw.h>
+#include <sys/param.h>
 
 void
-memtest(void *x, unsigned count)
+memcpy(void *dst, const void *src, int len)
 {
-	unsigned *w = x;
-	unsigned n;
-	count /= 4;
+	const char *s = src;
+	char *d = dst;
 
-	printf("memtest write - %d\n", count);
-	for (n = 0; n < count; n++) {
-		unsigned chk = 0xa5a5a5a5 ^ n;
-		w[n] = chk;
-	}
-	printf("memtest read\n");
-	for (n = 0; n < count; n++) {
-		unsigned chk = 0xa5a5a5a5 ^ n;
-		if (w[n] != chk) {
-			printf("ERROR @ %x (%x != %x)\n",
-				(unsigned) (w+n), w[n], chk);
-			return;
-		}
-	}
-	printf("OK!\n");
+	while (len--)
+		*d++ = *s++;
 }
 
 void
-boot1(void)
+memset(void *b, int c, size_t len)
 {
-	if (warm_reset())
-		force_emif_self_refresh();
+	char *bp = b;
 
-	mux_init();
-	enable_uart_clocks();
-	serial_init();
-	scale_vcores();
-	clock_init();
-	sdram_init();
+	while (len--)
+		*bp++ = (unsigned char)c;
+}
 
-	printf("boot1\n");
-	printf("MLO\n");
+int
+memcmp(const void *b1, const void *b2, size_t len)
+{
+	const unsigned char *p1, *p2;
 
-	memtest((void *)0x82000000, 8*1024*1024);
-	memtest((void *)0xA0208000, 8*1024*1024);
+	for (p1 = b1, p2 = b2; len > 0; len--, p1++, p2++) {
+		if (*p1 != *p2)
+			return ((*p1) - (*p2));
+	}
+	return (0);
+}
+
+int
+strcmp(const char *s1, const char *s2)
+{
+
+	for (; *s1 == *s2 && *s1 != '\0'; s1++, s2++)
+		;
+	return ((unsigned char)*s1 - (unsigned char)*s2);
+}
+
+int
+strncmp(const char *s1, const char *s2, size_t len)
+{
+
+	for (; len > 0 && *s1 == *s2 && *s1 != '\0'; len--, s1++, s2++)
+		;
+	return (len == 0 ? 0 : (unsigned char)*s1 - (unsigned char)*s2);
+}
+
+void
+strcpy(char *dst, const char *src)
+{
+
+	while (*src != '\0')
+		*dst++ = *src++;
+	*dst = '\0';
+}
+
+void
+strcat(char *dst, const char *src)
+{
+
+	while (*dst != '\0')
+		dst++;
+	while (*src != '\0')
+		*dst++ = *src++;
+	*dst = '\0';
+}
+
+char *
+strchr(const char *s, char ch)
+{
+
+	for (; *s != '\0'; s++) {
+		if (*s == ch)
+			return ((char *)(uintptr_t)(const void *)s);
+	}
+	return (NULL);
+}
+
+size_t
+strlen(const char *s)
+{
+	size_t len = 0;
+
+	while (*s++ != '\0')
+		len++;
+	return (len);
 }
