@@ -207,7 +207,7 @@ emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 	writel(ddr_regs->mr2, base + EMIF_LPDDR2_MODE_REG_DATA);
 
 	/* Set SDRAM CONFIG register again here with final RL-WL value */
-	writel(ddr_regs->config_final, base + EMIF_SDRAM_CONFIG);
+	writel(ddr_regs->config, base + EMIF_SDRAM_CONFIG);
 	writel(ddr_regs->phy_ctrl_1, base + EMIF_DDR_PHY_CTRL_1);
 
 	/*
@@ -221,8 +221,7 @@ emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 	/* set MR16 register */
 	writel(MR16_ADDR | REF_EN, base + EMIF_LPDDR2_MODE_REG_CFG);
 	writel(0, base + EMIF_LPDDR2_MODE_REG_DATA);
-	writel(CS1_MR(MR16_ADDR | REF_EN),
-	    base + EMIF_LPDDR2_MODE_REG_CFG);
+	writel(CS1_MR(MR16_ADDR | REF_EN), base + EMIF_LPDDR2_MODE_REG_CFG);
 	writel(0, base + EMIF_LPDDR2_MODE_REG_DATA);
 	/* LPDDR2 init complete */
 }

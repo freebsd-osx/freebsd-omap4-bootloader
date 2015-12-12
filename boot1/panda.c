@@ -263,13 +263,13 @@ mux_init(void)
 }
 
 static struct ddr_regs elpida2G_400_mhz_1cs = {
+	.config_init	= 0x80800eb2,
+	.config		= 0x80801ab2,
 	.tim1		= 0x10eb0662,
 	.tim2		= 0x20370dd2,
 	.tim3		= 0x00b1c33f,
 	.phy_ctrl_1	= 0x849ff408,
 	.ref_ctrl	= 0x00000618,
-	.config_init	= 0x80800eb2,
-	.config_final	= 0x80801ab2,
 	.zq_config	= 0xd00b3215,
 	.mr1		= 0x83,
 	.mr2		= 0x4
@@ -277,26 +277,26 @@ static struct ddr_regs elpida2G_400_mhz_1cs = {
 
 static struct ddr_regs elpida2G_400_mhz_2cs = {
 	/* tRRD changed from 10ns to 12.5ns because of the tFAW requirement*/
+	.config_init	= 0x80000eb9,
+	.config		= 0x80001ab9,
 	.tim1		= 0x10eb0662,
 	.tim2		= 0x20370dd2,
 	.tim3		= 0x00b1c33f,
 	.phy_ctrl_1	= 0x849ff408,
 	.ref_ctrl	= 0x00000618,
-	.config_init	= 0x80000eb9,
-	.config_final	= 0x80001ab9,
 	.zq_config	= 0xd00b3215,
 	.mr1		= 0x83,
 	.mr2		= 0x4
 };
 
 static struct ddr_regs elpida4G_466_mhz_1cs = {
+	.config_init	= 0x80800eb2,
+	.config		= 0x80801eb2,
 	.tim1		= 0x130f376b,
 	.tim2		= 0x3041105a,
 	.tim3		= 0x00f543cf,
 	.phy_ctrl_1	= 0x449ff37b,
 	.ref_ctrl	= 0x0000071b,
-	.config_init	= 0x80800eb2,
-	.config_final	= 0x80801eb2,
 	.zq_config	= 0x500b3215,
 	.mr1		= 0x83,
 	.mr2		= 0x5

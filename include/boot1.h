@@ -50,13 +50,13 @@ uint32_t	poll(uint32_t mask, uint32_t value, uint32_t addr);
 
 /* structure for ddr timings */
 struct ddr_regs {
+	uint32_t config_init;
+	uint32_t config;
 	uint32_t tim1;
 	uint32_t tim2;
 	uint32_t tim3;
 	uint32_t phy_ctrl_1;
 	uint32_t ref_ctrl;
-	uint32_t config_init;
-	uint32_t config_final;
 	uint32_t zq_config;
 	uint8_t mr1;
 	uint8_t mr2;
