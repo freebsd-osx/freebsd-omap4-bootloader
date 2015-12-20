@@ -52,7 +52,7 @@ void	clock_init(void);
 void	scale_vcores(void);
 void	sdram_init(void);
 void	serial_init(void);
-
+void	storage_init(void);
 int	serial_putc(char c);
 int	printf(const char *fmt, ...);
 
@@ -82,9 +82,9 @@ void	force_emif_self_refresh(void);
 uint32_t	get_omap_rev(void);
 uint32_t	warm_reset(void);
 
-int mmc_init(int slot);
-int mmc_read(uint32_t start, int size, uint8_t *dst);
-int mmc_write(u_long start, int size, uint8_t *src);
-int mmc_size(uint32_t *sectors);
+int	mmc_init(int slot);
+int	mmc_read(uint32_t start, int size, uint8_t *dst);
+int	mmc_write(u_long start, int size, uint8_t *src);
+int	mmc_size(uint32_t *sectors);
 
 #endif /* !_BOOT_H_ */

@@ -367,3 +367,9 @@ sdram_init(void)
 		writel(0xa0888c03, CONTROL_LPDDR2IO2_3);
 	}
 }
+
+void
+storage_init(void)
+{
+	mmc_init(0);
+}
