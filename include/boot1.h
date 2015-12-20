@@ -28,7 +28,24 @@
 #define _BOOT_H_
 
 #include <sys/types.h>
+
 #include <machine/stdarg.h>
+
+#ifdef DEBUG
+#define debug(x...) printf(x)
+#else
+#define debug(x...)
+#endif /* !DEBUG */
+
+#define OMAP4430_ES1_0	0x44300100
+#define OMAP4430_ES2_0	0x44300200
+#define OMAP4430_ES2_1	0x44300210
+#define OMAP4430_ES2_2	0x44300220
+#define OMAP4430_ES2_3	0x44300230
+#define OMAP4460_ES1_0	0x44600100
+#define OMAP4460_ES1_1	0x44600110
+#define OMAP4470_ES1_0	0x44700100
+#define REV_INVALID	0x00000000
 
 void	mux_init(void);
 void	clock_init(void);
@@ -38,12 +55,6 @@ void	serial_init(void);
 
 int	serial_putc(char c);
 int	printf(const char *fmt, ...);
-
-#ifdef DEBUG
-#define debug(x...) printf(x)
-#else
-#define debug(x...)
-#endif /* !DEBUG */
 
 void		sdelay(unsigned long loops);
 uint32_t	poll(uint32_t mask, uint32_t value, uint32_t addr);
@@ -71,14 +82,9 @@ void	force_emif_self_refresh(void);
 uint32_t	get_omap_rev(void);
 uint32_t	warm_reset(void);
 
-#define OMAP4430_ES1_0	0x44300100
-#define OMAP4430_ES2_0	0x44300200
-#define OMAP4430_ES2_1	0x44300210
-#define OMAP4430_ES2_2	0x44300220
-#define OMAP4430_ES2_3	0x44300230
-#define OMAP4460_ES1_0	0x44600100
-#define OMAP4460_ES1_1	0x44600110
-#define OMAP4470_ES1_0	0x44700100
-#define REV_INVALID	0x00000000
+int mmc_init(int slot);
+int mmc_read(uint32_t start, int size, uint8_t *dst);
+int mmc_write(u_long start, int size, uint8_t *src);
+int mmc_size(uint32_t *sectors);
 
 #endif /* !_BOOT_H_ */

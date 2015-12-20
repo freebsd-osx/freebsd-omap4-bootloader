@@ -24,27 +24,40 @@
  * SUCH DAMAGE.
  */
 
-#include <boot1.h>
-#include <io.h>
-#include <util.h>
+#ifndef _OMAP4_TIMER_H_
+#define _OMAP4_TIMER_H_
 
-#include <omap4/hw.h>
+#define	CONFIG_SYS_HZ	1000
 
-extern unsigned char __bss_start[];
-extern unsigned char __bss_end[];
+#define V_OSCK		19200000	/* Clock output from T2 */
+#define V_SCLK		V_OSCK
 
-void
-boot1(void)
-{
-	if (warm_reset())
-		force_emif_self_refresh();
+#define TCLR_ST		(0x1 << 0)
+#define TCLR_AR		(0x1 << 1)
+#define TCLR_PRE	(0x1 << 5)
 
-	mux_init();
-	enable_uart_clocks();
-	serial_init();
-	scale_vcores();
-	clock_init();
-	sdram_init();
-	bzero(__bss_start, __bss_end - __bss_start);
-	mmc_init(0);
-}
+#define CONFIG_SYS_PTV		2	/* Divisor: 2^(PTV+1) => 8 */
+
+struct gptimer {
+	uint32_t tidr;		/* 0x00 r */
+	uint8_t res[0xc];
+	uint32_t tiocp_cfg;	/* 0x10 rw */
+	uint32_t tistat;	/* 0x14 r */
+	uint32_t tisr;		/* 0x18 rw */
+	uint32_t tier;		/* 0x1c rw */
+	uint32_t twer;		/* 0x20 rw */
+	uint32_t tclr;		/* 0x24 rw */
+	uint32_t tcrr;		/* 0x28 rw */
+	uint32_t tldr;		/* 0x2c rw */
+	uint32_t ttgr;		/* 0x30 rw */
+	uint32_t twpc;		/* 0x34 r */
+	uint32_t tmar;		/* 0x38 rw */
+	uint32_t tcar1;		/* 0x3c r */
+	uint32_t tcicr;		/* 0x40 rw */
+	uint32_t tcar2;		/* 0x44 r */
+};
+
+void udelay(unsigned long usec);
+unsigned long get_timer(unsigned long base);
+
+#endif /* _OMAP4_TIMER_H_ */

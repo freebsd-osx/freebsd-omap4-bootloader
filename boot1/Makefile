@@ -14,7 +14,7 @@ SRCS+= main.c printf.c util.c
 
 MAN=
 
-#ACFLAGS+= -D__ASSEMBLY__
+ACFLAGS+= -D__ASSEMBLY__
 
 CFLAGS+= -I${.CURDIR}/../include \
 	 -I. \

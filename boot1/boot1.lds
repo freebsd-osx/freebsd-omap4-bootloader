@@ -24,24 +24,30 @@
  * SUCH DAMAGE.
  */
 
+MEMORY { .sram : ORIGIN = 0x40300000, LENGTH = (0x4030C000 - 0x40300000) }
+MEMORY { .sdram : ORIGIN = 0x80a00000, LENGTH = 0x80000 }
+
 ENTRY(_start)
 SECTIONS {
-	.text : { *(.text) }
+	.text : { *(.text*) } >.sram
 
 	. = ALIGN(4);
-	.got : { *(.got) }
+	.got : { *(.got*) } >.sram
 
 	. = ALIGN(4);
-	.rodata : { *(.rodata) }
+	.rodata : { *(.rodata*) } >.sram
 
 	. = ALIGN(4);
-	.data : { *(.data) }
+	.data : { *(.data*) } >.sram
 
-	. = ALIGN(4);
-	__bss_start = .;
-	.bss : { *(.bss) }
-	. = ALIGN(4);
-	__bss_end = .;
+	.bss :
+	{
+		. = ALIGN(4);
+		PROVIDE (__bss_start = .);
+		*(.bss*)
+		. = ALIGN(4);
+		PROVIDE (__bss_end = .);
+	} >.sdram
 
 	/DISCARD/ : { *(.ARM.exidx) }
 }

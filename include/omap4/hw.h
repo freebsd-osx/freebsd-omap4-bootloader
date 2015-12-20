@@ -35,6 +35,9 @@
 #define OMAP44XX_L4_IO_BASE		0x4a000000
 #define OMAP44XX_WAKEUP_L4_IO_BASE	0x4a300000
 #define OMAP44XX_L4_PER			0x48000000
+#define OMAP44XX_SDRAM_BASE		0x80000000
+
+#define SDRAM_STACK			(OMAP44XX_SDRAM_BASE + (32 << 20))
 
 /* CONTROL */
 #define CONTROL_ID_CODE			0x4a002204
@@ -182,24 +185,6 @@
 #define SDRC_MCFG_0		(OMAP44XX_SDRC_BASE + 0x80)
 #define SDRC_MR_0		(OMAP44XX_SDRC_BASE + 0x84)
 
-/* timer regs offsets (32 bit regs) */
-#define TIDR			0x0      /* r */
-#define TIOCP_CFG		0x10     /* rw */
-#define TISTAT			0x14     /* r */
-#define TISR			0x18     /* rw */
-#define TIER			0x1c     /* rw */
-#define TWER			0x20     /* rw */
-#define TCLR			0x24     /* rw */
-#define TCRR			0x28     /* rw */
-#define TLDR			0x2c     /* rw */
-#define TTGR			0x30     /* rw */
-#define TWPS			0x34     /* r */
-#define TMAR			0x38     /* rw */
-#define TCAR1			0x3c     /* r */
-#define TSICR			0x40     /* rw */
-#define TCAR2			0x44     /* r */
-#define GPT_EN			0x03 /* enable sys_clk NO-prescale /1 */
-
 /* Watchdog */
 #define WWPS			0x34     /* r */
 #define WSPR			0x48     /* rw */
@@ -207,8 +192,6 @@
 #define WD_UNLOCK2		0x5555
 
 #define CLK32K_COUNTER_REGISTER		0x4a304010
-#define CONTROL_PBIAS_LITE		0x4a100600
-#define CONTROL_CONF_MMC1		0x4a100628
 
 /* PRM */
 #define PRM_BASE                        0x4a306000
@@ -536,11 +519,14 @@
 #define IVA2_WRITE_PERMISSION_3		(PM_IVA2_BASE_ADDR_ARM + 0xb8)
 
 /* MMC */
-#define OMAP_HSMMC1_BASE	0x4809c000
-#define OMAP_HSMMC2_BASE	0x480b4000
-#define OMAP_HSMMC3_BASE	0x480aD000
-#define OMAP_HSMMC4_BASE	0x480d1000
-#define OMAP_HSMMC5_BASE	0x480d5000
+#define OMAP_HSMMC1_BASE	0x4809c100
+#define OMAP_HSMMC2_BASE	0x480b4100
+#define OMAP_HSMMC3_BASE	0x480ad100
+#define OMAP_HSMMC4_BASE	0x480d1100
+#define OMAP_HSMMC5_BASE	0x480d5100
+
+#define CONTROL_PBIASLITE	0x4a100600
+#define CONTROL_CONF_MMC1	0x4a100628
 
 /* defines for mmc configuration */
 #define MMCSD_WIDTH_SUPPORTED	MMCSD_8BIT_BUS_WIDTH_SUPPORTED
@@ -551,7 +537,6 @@
 #define I2C_BASE1		(OMAP44XX_L4_PER + 0x70000)
 #define I2C_BASE2		(OMAP44XX_L4_PER + 0x72000)
 #define I2C_BASE3		(OMAP44XX_L4_PER + 0x60000)
-
 
 /* EMIF and DMM registers */
 #define EMIF1_BASE			0x4c000000
