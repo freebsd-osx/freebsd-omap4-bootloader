@@ -1,0 +1,4 @@
+NOTE ANY CHANGES YOU MAKE TO THE BOOTBLOCKS HERE.  The format of this
+file is important.  Make sure the current version number is on line 4.
+
+0.1:	Initial OMAP4 SPL version.

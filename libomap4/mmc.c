@@ -34,6 +34,8 @@
 #include <omap4/mmchs.h>
 #include <omap4/timer.h>
 
+#include "util.h"
+
 #define MAX_RETRY_MS	1000
 #define OMAP_MMC_MASTER_CLOCK   96000000
 
@@ -114,7 +116,7 @@ mmc_clock_config(struct mmchs *mmc_base, uint32_t iclk, unsigned short clk_div)
 	while ((readl(&mmc_base->sysctl) & ICS_MASK) == ICS_NOTREADY) {
 		if (get_timer(0) - start > MAX_RETRY_MS) {
 			printf("%s: timedout waiting for ics!\n", __func__);
-			return -1;
+			return (-1);
 		}
 	}
 
@@ -136,7 +138,7 @@ mmc_hw_init(struct mmchs *mmc_base)
 	while ((readl(&mmc_base->sysstatus) & RESETDONE) == 0) {
 		if (get_timer(0) - start > MAX_RETRY_MS) {
 			printf("%s: timedout waiting for resetdone\n", __func__);
-			return -1;
+			return (-1);
 		}
 	}
 
@@ -145,7 +147,7 @@ mmc_hw_init(struct mmchs *mmc_base)
 	while ((readl(&mmc_base->sysctl) & SOFTRESETALL) != 0) {
 		if (get_timer(0) - start > MAX_RETRY_MS) {
 			printf("%s: timedout waiting for softresetall\n", __func__);
-			return -1;
+			return (-1);
 		}
 	}
 	writel(DTW_1_BITMODE | SDBP_PWROFF | SDVS_3V0, &mmc_base->hctl);
@@ -179,7 +181,7 @@ mmc_send_cmd(struct mmchs *mmc_base, uint32_t cmd, uint32_t arg, uint32_t *resp)
 	while ((readl(&mmc_base->pstate) & DATI_MASK) == DATI_CMDDIS) {
 		if (get_timer(0) - start > MAX_RETRY_MS) {
 			printf("%s: timedout waiting for dati!\n", __func__);
-			return -1;
+			return (-1);
 		}
 	}
 
@@ -207,7 +209,7 @@ mmc_send_cmd(struct mmchs *mmc_base, uint32_t cmd, uint32_t arg, uint32_t *resp)
 			mmc_stat = readl(&mmc_base->stat);
 			if (get_timer(0) - start > MAX_RETRY_MS) {
 				printf("%s : timeout: No status update\n", __func__);
-				return -1;
+				return (-1);
 			}
 		} while (mmc_stat == 0);
 
@@ -230,21 +232,18 @@ mmc_send_cmd(struct mmchs *mmc_base, uint32_t cmd, uint32_t arg, uint32_t *resp)
 }
 
 static int
-mmc_read_data(struct mmchs *mmc_base, uint32_t *dst)
+mmc_read_data(struct mmchs *mmc_base, u_long *buf)
 {
 	uint32_t mmc_stat;
-	uint32_t read_count = 0;
-	u_long start;
-	/*
-	 * Start Polled Read
-	 */
+	uint32_t count = 0;
+
 	while (1) {
-		start = get_timer(0);
+		u_long start = get_timer(0);
 		do {
 			mmc_stat = readl(&mmc_base->stat);
 			if (get_timer(0) - start > MAX_RETRY_MS) {
-				printf("%s : timeout: No status update\n", __func__);
-				return -1;
+				printf("%s: timedout waiting for status!\n", __func__);
+				return (-1);
 			}
 		} while (mmc_stat == 0);
 
@@ -256,9 +255,9 @@ mmc_read_data(struct mmchs *mmc_base, uint32_t *dst)
 
 			writel(readl(&mmc_base->stat) | BRR_MASK, &mmc_base->stat);
 			for (k = 0; k < MMCSD_SECTOR_SIZE / 4; k++) {
-				*dst = readl(&mmc_base->data);;
-				dst++;
-				read_count += 4;
+				*buf = readl(&mmc_base->data);
+				buf++;
+				count += 4;
 			}
 		}
 
@@ -274,7 +273,7 @@ mmc_read_data(struct mmchs *mmc_base, uint32_t *dst)
 }
 
 static int
-write_data(struct mmchs *mmc_base, uint32_t *src)
+write_data(struct mmchs *mmc_base, u_long *src)
 {
 	uint32_t mmc_stat;
 	int count = 0;
@@ -290,13 +289,13 @@ write_data(struct mmchs *mmc_base, uint32_t *src)
 			if (get_timer(0) - start > MAX_RETRY_MS) {
 				printf("%s: timedout waiting for status!\n",
 				    __func__);
-				return -1;
+				return (-1);
 			}
 		} while (mmc_stat == 0);
 
 		if ((mmc_stat & ERRI_MASK) != 0) {
 			printf("mmc write error %08x\n", mmc_stat);
-			return -1;
+			return (-1);
 		}
 
 		if (mmc_stat & BWR_MASK) {
@@ -318,7 +317,7 @@ write_data(struct mmchs *mmc_base, uint32_t *src)
 			break;
 		}
 	}
-	return count;
+	return (count);
 }
 
 static int
@@ -467,7 +466,7 @@ mmc_read_cardsize(struct mmchs *mmc_base, struct mmc_csd *csd)
 			err = mmc_send_cmd(mmc_base, MMC_CMD8, arg, resp);
 			if (err)
 				return (err);
-			err = mmc_read_data(mmc_base, (uint32_t *)&ext_csd);
+			err = mmc_read_data(mmc_base, (u_long *)&ext_csd);
 			if (err)
 				return (err);
 			mmc.size = ext_csd.sectorcount;
@@ -498,7 +497,7 @@ mmc_read_cardsize(struct mmchs *mmc_base, struct mmc_csd *csd)
 }
 
 static int
-read_sector(struct mmchs *mmc_base, uint32_t start, uint32_t nbytes, uint32_t *dst)
+read_sector(struct mmchs *mmc_base, u_long *buf, u_long start, unsigned nbytes)
 {
 	int err;
 	uint32_t arg;
@@ -508,7 +507,7 @@ read_sector(struct mmchs *mmc_base, uint32_t start, uint32_t nbytes, uint32_t *d
 	uint32_t sector_inc;
 
 	if (nsectors == 0) {
-		printf("mmc read: invalid size\n");
+		printf("%s: invalid size\n", __func__);
 		return (-1);
 	}
 	if (mmc.mode == SECTOR_MODE) {
@@ -523,12 +522,11 @@ read_sector(struct mmchs *mmc_base, uint32_t start, uint32_t nbytes, uint32_t *d
 		if (err)
 			return (err);
 
-
-		err = mmc_read_data(mmc_base, dst);
+		err = mmc_read_data(mmc_base, buf);
 		if (err)
 			return (err);
 
-		dst += (MMCSD_SECTOR_SIZE / 4);
+		buf += (MMCSD_SECTOR_SIZE / 4);
 		arg += sector_inc;
 		nsectors--;
 	}
@@ -536,7 +534,7 @@ read_sector(struct mmchs *mmc_base, uint32_t start, uint32_t nbytes, uint32_t *d
 }
 
 static int
-write_sector(struct mmchs *mmc_base, u_long start, uint32_t nbytes, uint32_t *src)
+write_sector(struct mmchs *mmc_base, u_long *src, u_long start, uint32_t nbytes)
 {
 	uint8_t err;
 	uint32_t arg;
@@ -672,7 +670,7 @@ erase_sector(struct mmchs *mmc_base, uint32_t start, int size)
 				if (get_timer(0) - begin > MAX_RETRY_MS) {
 					printf("%s: timedout waiting for status!\n",
 					    __func__);
-					return -1;
+					return (-1);
 				}
 			} while (mmc_stat == 0);
 
@@ -847,30 +845,30 @@ mmc_init(int slot)
 }
 
 int
-mmc_read(uint32_t start, int size, uint8_t *dst)
+mmc_read(u_long *dst, u_long start, unsigned size)
 {
 	int ret;
 
-	ret = read_sector(mmc.host, start, size, (uint32_t *)dst);
-	return (ret);
-}
-
-u_long
-mmc_bread(u_long start, u_long blkcnt, u_long *dst)
-{
-	u_long ret;
-
-	ret = (u_long)read_sector(mmc.host, start, (blkcnt * MMCSD_SECTOR_SIZE),
-	    (uint32_t *)dst);
+	ret = read_sector(mmc.host, dst, start, size);
 	return (ret);
 }
 
 int
-mmc_write(u_long start, int size, uint8_t *src)
+mmc_bread(u_long *dst, u_long start, unsigned nblk)
 {
 	int ret;
 
-	ret = write_sector(mmc.host, start, size, (uint32_t *)src);
+	ret = read_sector(mmc.host, dst, start,
+	    (nblk * MMCSD_SECTOR_SIZE));
+	return (ret);
+}
+
+int
+mmc_write(u_long *src, u_long start, unsigned size)
+{
+	int ret;
+
+	ret = write_sector(mmc.host, src, start, size);
 	return (ret);
 }
 
@@ -883,7 +881,7 @@ mmc_size(uint32_t *sectors)
 }
 
 int
-mmc_erase(uint32_t start, int size)
+mmc_erase(u_long start, unsigned size)
 {
 	int ret;
 

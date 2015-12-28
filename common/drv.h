@@ -24,67 +24,21 @@
  * SUCH DAMAGE.
  */
 
-#include <boot1.h>
-#include <io.h>
-#include <omap4/hw.h>
+#ifndef _DRV_H_
+#define _DRV_H_
 
-#define THR	0x00
-#define RHR	0x00
-#define DLL	0x00
-#define IER	0x04
-#define DLH	0x04
-#define FCR	0x08
-#define IIR	0x08
-#define LCR	0x0C
-#define MCR	0x10
-#define LSR	0x14
-#define MSR	0x18
-#define SCR	0x1C
-#define MDR1	0x20
+struct dsk {
+	unsigned int drive;
+	unsigned int type;
+	unsigned int unit;
+	unsigned int slice;
+	int part;
+	daddr_t start;
+	int init;
+};
 
-#define WR(val, addr)	writeb(val, console + addr)
-#define RD(addr)	readb(console + addr)
+int drvread(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk);
+int drvwrite(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk);
+uint64_t drvsize(struct dsk *dskp);
 
-#define BAUDRATE	115200
-#define SERIAL_CLK_HZ	48000000
-
-extern unsigned console;
-
-void
-serial_init(void)
-{
-	unsigned divisor = SERIAL_CLK_HZ / 16 / BAUDRATE;
-
-	WR(0x00, IER);
-	WR(0x07, MDR1); /* disable */
-	WR(0x83, LCR);  /* 8N1 + configure mode A */
-	WR(divisor & 0xFF, DLL);
-	WR(divisor >> 8, DLH);
-	WR(0x03, LCR);  /* 8N1 */
-	WR(0x03, MCR);  /* DTR, RTS */
-	WR(0x07, FCR);  /* reset and enable FIFO */
-	WR(0x00, MDR1); /* uart 16x mode */
-}
-
-static inline void
-serial_tx(char c)
-{
-	while (!(RD(LSR) & 0x20)) ;
-	WR(c, THR);
-}
-
-int
-serial_putc(char c)
-{
-	if (c == '\n')
-		serial_tx('\r');
-	serial_tx(c);
-	return (1);
-}
-
-void
-serial_puts(const char *s)
-{
-	while (*s)
-		serial_putc(*s++);
-}
+#endif /* !_DRV_H_ */

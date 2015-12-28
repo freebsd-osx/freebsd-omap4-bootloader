@@ -1,23 +1,35 @@
 .include <src.opts.mk>
 
+.PATH: ${.CURDIR}/../common ${.CURDIR}/../../../common
+
 PROG=           boot1.elf
-NEWVERSWHAT=    "OMAP4 BOOT1 " ${MACHINE_ARCH}
+NEWVERSWHAT=    "OMAP4 BOOT1" ${MACHINE_ARCH}
 TEXT_BASE=	0x40300000
 WARNS?=		2
 
 FILES= boot1.bin MLO
-
-SRCS= start.S boot1.c panda.c
-
-.PATH: ${.CURDIR}/../common
-SRCS+= main.c printf.c util.c
-
 MAN=
+
+SRCS=	start.S boot1.c panda.c cons.c \
+	main.c vers.c util.c gpt.c crc32.c drv.c
+
+.PATH: ${.CURDIR}/../../../../../contrib/compiler-rt/lib/builtins
+.PATH: ${.CURDIR}/../../../../../contrib/compiler-rt/lib/builtins/arm
+
+SRCS+=	umoddi3.c udivsi3.S divsi3.S umodsi3.S aeabi_uldivmod.S aeabi_uidivmod.S \
+	udivmoddi4.c aeabi_div0.c udivmodsi4.S
 
 ACFLAGS+= -D__ASSEMBLY__
 
-CFLAGS+= -I${.CURDIR}/../include \
-	 -I. \
+# Decide level of UFS support.
+GPTBOOT_UFS?=	UFS1_AND_UFS2
+
+CFLAGS+= -DBOOTPROG=\"boot1\" \
+	 -D${GPTBOOT_UFS} \
+	 -I${.CURDIR}/../../../common \
+	 -I${.CURDIR}/../common \
+	 -I${.CURDIR}/../include \
+	 -I${.CURDIR}/../../../.. \
 	 -ffreestanding -msoft-float
 
 LDFLAGS= -nostdlib -static -dead_strip \
@@ -28,8 +40,8 @@ LDADD=		${LIBOMAP4}
 
 HOST_CC?= /usr/bin/cc
 
-#vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
-#	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
+vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
+	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
 
 MLO: ${PROG} signGP
 	./signGP boot1.bin ${TEXT_BASE}
@@ -40,8 +52,6 @@ signGP: ${.CURDIR}/signGP.c
 boot1.bin: ${PROG}
 	${OBJCOPY} -O binary ${PROG} ${.TARGET}
 #	${OBJCOPY} --gap-fill=0xff -O binary ${PROG} ${.TARGET}
-
-#main.o: ${.CURDIR}/../../../common/ufsread.c
 
 machine:
 	ln -sf ${.CURDIR}/../../../../${MACHINE_CPUARCH}/include machine

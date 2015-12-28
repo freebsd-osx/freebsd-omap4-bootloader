@@ -24,24 +24,66 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _UTIL_H_
-#define	_UTIL_H_
+#include <boot1.h>
+#include <io.h>
 
-#include <sys/types.h>
+#define THR	0x00
+#define RHR	0x00
+#define DLL	0x00
+#define IER	0x04
+#define DLH	0x04
+#define FCR	0x08
+#define IIR	0x08
+#define LCR	0x0C
+#define MCR	0x10
+#define LSR	0x14
+#define MSR	0x18
+#define SCR	0x1C
+#define MDR1	0x20
 
-void memcpy(void *dst, const void *src, int len);
-void memset(void *b, int c, size_t len);
-int memcmp(const void *b1, const void *b2, size_t len);
+#define WR(val, addr)	writeb(val, console + addr)
+#define RD(addr)	readb(console + addr)
 
-#define	bcopy(src, dst, len)	memcpy((dst), (src), (len))
-#define	bzero(buf, size)	memset((buf), 0, (size))
-#define	bcmp(b1, b2, len)	(memcmp((b1), (b2), (len)) != 0)
+#define BAUDRATE	115200
+#define SERIAL_CLK_HZ	48000000
 
-int strcmp(const char *s1, const char *s2);
-int strncmp(const char *s1, const char *s2, size_t len);
-void strcpy(char *dst, const char *src);
-void strcat(char *dst, const char *src);
-char *strchr(const char *s, char ch);
-size_t strlen(const char *s);
+extern unsigned console;
 
-#endif /* !_UTIL_H_ */
+void
+cons_init(void)
+{
+	unsigned divisor = SERIAL_CLK_HZ / 16 / BAUDRATE;
+
+	WR(0x00, IER);
+	WR(0x07, MDR1); /* disable */
+	WR(0x83, LCR);  /* 8N1 + configure mode A */
+	WR(divisor & 0xFF, DLL);
+	WR(divisor >> 8, DLH);
+	WR(0x03, LCR);  /* 8N1 */
+	WR(0x03, MCR);  /* DTR, RTS */
+	WR(0x07, FCR);  /* reset and enable FIFO */
+	WR(0x00, MDR1); /* uart 16x mode */
+}
+
+static inline void
+putc(char c)
+{
+	while (!(RD(LSR) & 0x20)) ;
+	WR(c, THR);
+}
+
+int
+putchar(char c)
+{
+	if (c == '\n')
+		putc('\r');
+	putc(c);
+	return (1);
+}
+
+void
+puts(const char *s)
+{
+	while (*s)
+		putchar(*s++);
+}

@@ -49,5 +49,5 @@ SECTIONS {
 		PROVIDE (__bss_end = .);
 	} >.sdram
 
-	/DISCARD/ : { *(.ARM.exidx) }
+	/DISCARD/ : { *(.ARM.exidx*) }
 }

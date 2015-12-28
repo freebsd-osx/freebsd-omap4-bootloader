@@ -26,9 +26,8 @@
 
 #include <boot1.h>
 #include <io.h>
-#include <util.h>
 
-#include <omap4/hw.h>
+#include "util.h"
 
 extern unsigned char __bss_start[];
 extern unsigned char __bss_end[];
@@ -41,7 +40,7 @@ boot1(void)
 
 	mux_init();
 	enable_uart_clocks();
-	serial_init();
+	cons_init();
 	scale_vcores();
 	clock_init();
 	sdram_init();

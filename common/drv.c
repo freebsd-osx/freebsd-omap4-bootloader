@@ -24,94 +24,37 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
 #include <sys/param.h>
 
-void
-memcpy(void *dst, const void *src, int len)
+#include <boot1.h>
+
+#include "drv.h"
+#include "util.h"
+
+uint64_t
+drvsize(struct dsk *dskp)
 {
-	const char *s = src;
-	char *d = dst;
+	uint32_t *sectors;
 
-	while (len--)
-		*d++ = *s++;
-}
-
-void
-memset(void *b, int c, size_t len)
-{
-	char *bp = b;
-
-	while (len--)
-		*bp++ = (unsigned char)c;
+	mmc_size(sectors);
+	return (*sectors);
 }
 
 int
-memcmp(const void *b1, const void *b2, size_t len)
+drvread(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk)
 {
-	const unsigned char *p1, *p2;
+	int ret;
 
-	for (p1 = b1, p2 = b2; len > 0; len--, p1++, p2++) {
-		if (*p1 != *p2)
-			return ((*p1) - (*p2));
-	}
-	return (0);
+	ret = mmc_bread(buf, lba, nblk);
+	return (ret);
 }
 
 int
-strcmp(const char *s1, const char *s2)
+drvwrite(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk)
 {
+	int ret;
 
-	for (; *s1 == *s2 && *s1 != '\0'; s1++, s2++)
-		;
-	return ((unsigned char)*s1 - (unsigned char)*s2);
-}
-
-int
-strncmp(const char *s1, const char *s2, size_t len)
-{
-
-	for (; len > 0 && *s1 == *s2 && *s1 != '\0'; len--, s1++, s2++)
-		;
-	return (len == 0 ? 0 : (unsigned char)*s1 - (unsigned char)*s2);
-}
-
-void
-strcpy(char *dst, const char *src)
-{
-
-	while (*src != '\0')
-		*dst++ = *src++;
-	*dst = '\0';
-}
-
-void
-strcat(char *dst, const char *src)
-{
-
-	while (*dst != '\0')
-		dst++;
-	while (*src != '\0')
-		*dst++ = *src++;
-	*dst = '\0';
-}
-
-char *
-strchr(const char *s, char ch)
-{
-
-	for (; *s != '\0'; s++) {
-		if (*s == ch)
-			return ((char *)(uintptr_t)(const void *)s);
-	}
-	return (NULL);
-}
-
-size_t
-strlen(const char *s)
-{
-	size_t len = 0;
-
-	while (*s++ != '\0')
-		len++;
-	return (len);
+	ret = mmc_write(buf, lba, nblk);
+	return (ret);
 }

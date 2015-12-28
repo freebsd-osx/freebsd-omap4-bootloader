@@ -51,10 +51,8 @@ void	mux_init(void);
 void	clock_init(void);
 void	scale_vcores(void);
 void	sdram_init(void);
-void	serial_init(void);
+void	cons_init(void);
 void	storage_init(void);
-int	serial_putc(char c);
-int	printf(const char *fmt, ...);
 
 void		sdelay(unsigned long loops);
 uint32_t	poll(uint32_t mask, uint32_t value, uint32_t addr);
@@ -83,8 +81,9 @@ uint32_t	get_omap_rev(void);
 uint32_t	warm_reset(void);
 
 int	mmc_init(int slot);
-int	mmc_read(uint32_t start, int size, uint8_t *dst);
-int	mmc_write(u_long start, int size, uint8_t *src);
+int	mmc_read(u_long *dst, u_long start, unsigned size);
+int	mmc_bread(u_long *dst, u_long start, unsigned nblk);
+int	mmc_write(u_long *src, u_long start, unsigned size);
 int	mmc_size(uint32_t *sectors);
 
 #endif /* !_BOOT_H_ */

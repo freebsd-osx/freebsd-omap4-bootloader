@@ -24,64 +24,9 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/param.h>
-#include <sys/gpt.h>
+#ifndef	_CONS_H_
+#define	_CONS_H_
 
-#include <boot1.h>
+void putchar(char c);
 
-#include "drv.h"
-#include "util.h"
-#include "gpt.h"
-
-#define PATH_UBLDR "/boot/loader"
-
-extern char bootprog_name[];
-extern char bootprog_rev[];
-extern char bootprog_date[];
-extern char bootprog_maker[];
-
-static const uuid_t freebsd_ufs_uuid = GPT_ENT_TYPE_FREEBSD_UFS;
-static struct dsk dsk;
-
-static int dskread(void *, daddr_t, unsigned);
-
-#include "ufsread.c"
-
-static struct dmadat _dmadat;
-
-static int
-gptinit(void)
-{
-	if (gptread(&freebsd_ufs_uuid, &dsk, dmadat->secbuf) == -1) {
-		printf("%s: unable to load GPT\n", BOOTPROG);
-		return (-1);
-	}
-	if (gptfind(&freebsd_ufs_uuid, &dsk, dsk.part) == -1) {
-		printf("%s: no UFS partition was found\n", BOOTPROG);
-		return (-1);
-	}
-	dsk_meta = 0;
-	return (0);
-}
-
-static int
-dskread(void *buf, daddr_t lba, unsigned nblk)
-{
-
-	return drvread(&dsk, buf, lba + dsk.start, nblk);
-}
-
-int
-main(void)
-{
-	printf("%s Revision %s\n", bootprog_name, bootprog_rev);
-	printf("(%s, %s)\n", bootprog_maker, bootprog_date);
-
-	dmadat = &_dmadat;
-
-	if (gptinit())
-		printf("failed\n");
-	else
-		printf("succeed\n");
-	return (0);
-}
+#endif	/* !_CONS_H_ */

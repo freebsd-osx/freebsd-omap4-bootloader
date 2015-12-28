@@ -1,17 +1,17 @@
 .include <src.opts.mk>
 
+.PATH: ${.CURDIR}/../../../common
+
 LIB=		omap4
 INTERNALLIB=
 WARNS?=		2
 
-SRCS+=	clock.c serial.c vcore.c cpu.c sdram.c syslib.c gpio.c \
+SRCS+=	clock.c vcore.c cpu.c sdram.c syslib.c gpio.c \
 	mmc.c timer.c
-
-.PATH: ${.CURDIR}/../../../../libkern/arm
-SRCS+=	divsi3.S
 
 CFLAGS+= -D_STANDALONE
 CFLAGS+= -I${.CURDIR}/../include/ \
+	 -I${.CURDIR}/../../../common \
 	 -I. \
 	 -ffreestanding -msoft-float
 

@@ -27,8 +27,11 @@
 #include <boot1.h>
 #include <io.h>
 #include <mux.h>
+
 #include <omap4/hw.h>
 #include <omap4/padconf.h>
+
+#include "util.h"
 
 unsigned console = OMAP44XX_UART3;
 
