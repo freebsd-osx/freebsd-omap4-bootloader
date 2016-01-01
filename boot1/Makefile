@@ -3,7 +3,7 @@
 .PATH: ${.CURDIR}/../common ${.CURDIR}/../../../common
 
 PROG=           boot1.elf
-NEWVERSWHAT=    "OMAP4 BOOT1" ${MACHINE_ARCH}
+NEWVERSWHAT=    "OMAP4 BOOT" ${MACHINE_ARCH}
 TEXT_BASE=	0x40300000
 WARNS?=		2
 
@@ -24,7 +24,7 @@ ACFLAGS+= -D__ASSEMBLY__
 # Decide level of UFS support.
 GPTBOOT_UFS?=	UFS1_AND_UFS2
 
-CFLAGS+= -DBOOTPROG=\"boot1\" \
+CFLAGS+= -DBOOTPROG=\"boot\" \
 	 -D${GPTBOOT_UFS} \
 	 -I${.CURDIR}/../../../common \
 	 -I${.CURDIR}/../common \

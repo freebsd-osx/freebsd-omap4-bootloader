@@ -27,13 +27,15 @@
 #include <sys/param.h>
 #include <sys/gpt.h>
 
+#include <machine/elf.h>
+
 #include <boot1.h>
 
 #include "drv.h"
 #include "util.h"
 #include "gpt.h"
 
-#define PATH_UBLDR "/boot/loader"
+#define PATH_LOADER	"/boot/ubldr"
 
 extern char bootprog_name[];
 extern char bootprog_rev[];
@@ -42,12 +44,34 @@ extern char bootprog_maker[];
 
 static const uuid_t freebsd_ufs_uuid = GPT_ENT_TYPE_FREEBSD_UFS;
 static struct dsk dsk;
+static char kname[1024];
 
 static int dskread(void *, daddr_t, unsigned);
 
 #include "ufsread.c"
 
 static struct dmadat _dmadat;
+
+static void
+load(void)
+{
+	Elf32_Ehdr eh;
+	ufs_ino_t ino;
+
+	if ((ino = lookup(kname)) == 0) {
+		printf("File %s not found\n", kname);
+		return;
+	}
+	if (fsread(ino, &eh, sizeof(eh)) != sizeof(eh)) {
+		printf("Can't read elf header\n");
+		return;
+	}
+	if (!IS_ELF(eh)) {
+		printf("Not an ELF file\n");
+		return;
+	}
+	printf("success\n");
+}
 
 static int
 gptinit(void)
@@ -77,11 +101,17 @@ main(void)
 	printf("%s Revision %s\n", bootprog_name, bootprog_rev);
 	printf("(%s, %s)\n", bootprog_maker, bootprog_date);
 
+	dsk.part = -1;
+	dsk.start = 0;
+
 	dmadat = &_dmadat;
 
 	if (gptinit())
-		printf("failed\n");
-	else
-		printf("succeed\n");
+		return (-1);
+	if (*kname == '\0')
+		strcpy(kname, PATH_LOADER);
+
+	load();
+
 	return (0);
 }
