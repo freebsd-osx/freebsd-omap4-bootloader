@@ -56,7 +56,10 @@ static void
 load(void)
 {
 	Elf32_Ehdr eh;
+	Elf32_Phdr ph;
+	caddr_t p;
 	ufs_ino_t ino;
+	int i;
 
 	if ((ino = lookup(kname)) == 0) {
 		printf("File %s not found\n", kname);
@@ -70,7 +73,25 @@ load(void)
 		printf("Not an ELF file\n");
 		return;
 	}
-	printf("success\n");
+	for (i = 0; i < eh.e_phnum; i++) {
+		fs_off = eh.e_phoff + i * eh.e_phentsize;
+		if (fsread(ino, &ph, sizeof(ph)) != sizeof(ph)) {
+			printf("Can't read program header %d\n", i);
+			return;
+		}
+		if (ph.p_type != PT_LOAD)
+			continue;
+		fs_off = ph.p_offset;
+		p = (caddr_t)ph.p_vaddr;
+		if (fsread(ino, p, ph.p_filesz) != ph.p_filesz) {
+			printf("Can't read content of section %d\n", i);
+			return;
+		}
+		if (ph.p_filesz != ph.p_memsz) {
+			bzero(p + ph.p_filesz, ph.p_memsz - ph.p_filesz);
+		}
+	}
+	(*(void (*)(int, int, int, int))eh.e_entry)(0, 0, 0, 0);
 }
 
 static int
