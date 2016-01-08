@@ -6,8 +6,7 @@ LIB=		omap4
 INTERNALLIB=
 WARNS?=		2
 
-SRCS+=	clock.c vcore.c cpu.c sdram.c syslib.c gpio.c \
-	mmc.c timer.c
+SRCS+=	clock.c vcore.c cpu.c sdram.c gpio.c mmc.c timer.c
 
 CFLAGS+= -D_STANDALONE
 CFLAGS+= -I${.CURDIR}/../include/ \

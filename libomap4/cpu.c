@@ -24,9 +24,35 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/types.h>
+
 #include <boot1.h>
 #include <io.h>
+
 #include <omap4/hw.h>
+
+#define LOOP	2000
+uint32_t
+poll(uint32_t mask, uint32_t value, uint32_t addr)
+{
+	uint32_t i = 0, val;
+	while (1) {
+		++i;
+		val = readl(addr) & mask;
+		if (val == value)
+			return (1);
+		if (i == LOOP)
+			return (0);
+	}
+	return (0);
+}
+
+void
+sdelay(u_long loops)
+{
+	__asm__ volatile ("1:\n" "subs %0, %1, #1\n"
+			  "bne 1b":"=r" (loops):"0"(loops));
+}
 
 uint32_t
 get_omap_rev(void)
@@ -67,45 +93,15 @@ get_omap_rev(void)
 	return (rev);
 }
 
+
+void
+reset_cpu(void)
+{
+	writel(PRM_RSTCTRL_RESET, PRM_RSTCTRL);
+}
+
 uint32_t
 warm_reset(void)
 {
 	return (readl(PRM_RSTST) & PRM_RSTST_WARM_RESET_MASK);
-}
-
-void
-control_io_interface()
-{
-	uint32_t lpddr2io;
-	uint32_t rev;
-
-	rev = get_omap_rev();
-	if (rev == OMAP4430_ES1_0)
-		lpddr2io = 0x1c1c1c1c;
-	else if (rev == OMAP4430_ES2_0)
-		lpddr2io = 0x9e9e9e9e;
-	else
-		lpddr2io = 0x7c7c7c7c;
-
-	writel(lpddr2io, CONTROL_LPDDR2IO1_0);
-	writel(lpddr2io, CONTROL_LPDDR2IO1_1);
-	writel(lpddr2io & ~(3 << 17), CONTROL_LPDDR2IO1_2);
-	writel(0xa0888c0f, CONTROL_LPDDR2IO1_3);
-
-	writel(lpddr2io, CONTROL_LPDDR2IO2_0);
-	writel(lpddr2io, CONTROL_LPDDR2IO2_1);
-	writel(lpddr2io & ~(3 << 17), CONTROL_LPDDR2IO2_2);
-	writel(0xa0888c0f, CONTROL_LPDDR2IO2_3);
-
-	if (!(readl(CONTROL_STD_FUSE_OPP_BGAP) & 0xffff)) {
-		writel(0x0401040f, CONTROL_LDOSRAM_IVA_VOLTAGE_CTRL);
-		writel(0x0401040f, CONTROL_LDOSRAM_MPU_VOLTAGE_CTRL);
-		writel(0x0401040f, CONTROL_LDOSRAM_CORE_VOLTAGE_CTRL);
-	}
-
-	if (!readl(CONTROL_EFUSE_1))
-		writel(0x1c4d0110, CONTROL_EFUSE_1);
-
-	if ((rev <OMAP4460_ES1_0) || !readl(CONTROL_EFUSE_2))
-		writel(0x99084000, CONTROL_EFUSE_2);
 }
