@@ -68,7 +68,8 @@ cons_init(void)
 static inline void
 putc(char c)
 {
-	while (!(RD(LSR) & 0x20)) ;
+	while (!(RD(LSR) & 0x20))
+		;
 	WR(c, THR);
 }
 
@@ -86,4 +87,18 @@ puts(const char *s)
 {
 	while (*s)
 		putchar(*s++);
+}
+
+char
+getc(void)
+{
+	while (!(RD(LSR) & 0x01))
+		;
+	return (RD(RHR));
+}
+
+int
+tstc(void)
+{
+	return ((RD(LSR) & 0x01) != 0);
 }

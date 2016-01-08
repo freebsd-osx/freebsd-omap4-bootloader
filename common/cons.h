@@ -28,5 +28,8 @@
 #define	_CONS_H_
 
 void putchar(char c);
+void puts(const char *s);
+char getc(void);
+int tstc(void);
 
 #endif	/* !_CONS_H_ */
