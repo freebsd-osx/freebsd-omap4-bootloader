@@ -31,12 +31,6 @@
 
 #include <machine/stdarg.h>
 
-#ifdef DEBUG
-#define debug(x...) printf(x)
-#else
-#define debug(x...)
-#endif /* !DEBUG */
-
 #define OMAP4430_ES1_0	0x44300100
 #define OMAP4430_ES2_0	0x44300200
 #define OMAP4430_ES2_1	0x44300210
@@ -55,6 +49,8 @@ void	cons_init(void);
 void	storage_init(void);
 
 void		sdelay(unsigned long loops);
+void		udelay(unsigned long usec);
+unsigned long	get_timer(unsigned long base);
 uint32_t	poll(uint32_t mask, uint32_t value, uint32_t addr);
 
 /* structure for ddr timings */
@@ -78,12 +74,16 @@ void	lock_core_dpll_shadow(void);
 void	force_emif_self_refresh(void);
 
 uint32_t	get_omap_rev(void);
+uint32_t	get_sdram_banks(void);
+uint32_t	get_sdram_start(void);
+uint32_t	get_sdram_size(void);
 uint32_t	warm_reset(void);
+void		reset_cpu(void);
 
 int	mmc_init(int slot);
 int	mmc_read(u_long *dst, u_long start, unsigned size);
 int	mmc_bread(u_long *dst, u_long start, unsigned nblk);
 int	mmc_write(u_long *src, u_long start, unsigned size);
-int	mmc_size(uint32_t *sectors);
-
+uint32_t	mmc_size(void);
+struct mmc	*get_mmc(void);
 #endif /* !_BOOT_H_ */

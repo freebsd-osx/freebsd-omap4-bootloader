@@ -29,11 +29,10 @@
 
 #include <machine/elf.h>
 
-#include <boot1.h>
-
 #include "drv.h"
 #include "util.h"
 #include "gpt.h"
+#include "syscall.h"
 
 #define PATH_LOADER	"/boot/ubldr"
 
@@ -91,7 +90,7 @@ load(void)
 			bzero(p + ph.p_filesz, ph.p_memsz - ph.p_filesz);
 		}
 	}
-	(*(void (*)(int, int, int, int))eh.e_entry)(0, 0, 0, 0);
+	((void(*)(void))eh.e_entry)();
 }
 
 static int
@@ -112,7 +111,6 @@ gptinit(void)
 static int
 dskread(void *buf, daddr_t lba, unsigned nblk)
 {
-
 	return drvread(&dsk, buf, lba + dsk.start, nblk);
 }
 
@@ -131,6 +129,8 @@ main(void)
 		return (-1);
 	if (*kname == '\0')
 		strcpy(kname, PATH_LOADER);
+
+	syscall_init();
 
 	load();
 

@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2015
+ * Copyright (c) 2016
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,32 +24,9 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#include <sys/param.h>
+#ifndef _SYSCALL_H_
+#define _SYSCALL_H_
 
-#include <boot1.h>
+void syscall_init(void);
 
-#include "drv.h"
-#include "util.h"
-
-uint64_t
-drvsize(struct dsk *dskp)
-{
-	return (mmc_size());
-}
-
-int
-drvread(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk)
-{
-	mmc_bread(buf, lba, nblk);
-	return (0);
-}
-
-int
-drvwrite(struct dsk *dskp, void *buf, daddr_t lba, unsigned nblk)
-{
-	int ret;
-
-	ret = mmc_write(buf, lba, nblk);
-	return (ret);
-}
+#endif /* !_SYSCALL_H_ */

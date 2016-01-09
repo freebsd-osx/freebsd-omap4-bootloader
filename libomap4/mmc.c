@@ -530,7 +530,7 @@ read_sector(struct mmchs *mmc_base, u_long *buf, u_long start, unsigned nbytes)
 		arg += sector_inc;
 		nsectors--;
 	}
-	return (0);
+	return (arg - start);
 }
 
 static int
@@ -873,18 +873,22 @@ mmc_write(u_long *src, u_long start, unsigned size)
 }
 
 int
-mmc_size(uint32_t *sectors)
-{
-	if (sectors)
-		*sectors = mmc.size;
-	return (0);
-}
-
-int
 mmc_erase(u_long start, unsigned size)
 {
 	int ret;
 
 	ret = erase_sector(mmc.host, start, size);
 	return (ret);
+}
+
+uint32_t
+mmc_size(void)
+{
+	return (mmc.size);
+}
+
+struct mmc *
+get_mmc(void)
+{
+	return (&mmc);
 }

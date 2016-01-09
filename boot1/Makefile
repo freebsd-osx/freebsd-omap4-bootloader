@@ -11,7 +11,8 @@ FILES= boot1.bin MLO
 MAN=
 
 SRCS=	start.S boot1.c panda.c cons.c \
-	main.c vers.c util.c gpt.c crc32.c drv.c
+	main.c vers.c util.c gpt.c crc32.c drv.c \
+	syscall.c
 
 .PATH: ${.CURDIR}/../../../../../contrib/compiler-rt/lib/builtins
 .PATH: ${.CURDIR}/../../../../../contrib/compiler-rt/lib/builtins/arm

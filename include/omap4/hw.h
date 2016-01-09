@@ -37,8 +37,6 @@
 #define OMAP44XX_L4_PER			0x48000000
 #define OMAP44XX_SDRAM_BASE		0x80000000
 
-#define SDRAM_STACK			(OMAP44XX_SDRAM_BASE + (32 << 20))
-
 /* CONTROL */
 #define CONTROL_ID_CODE			0x4a002204
 #define CONTROL_STD_FUSE_DIE_ID_0	0x4a002200
@@ -171,7 +169,7 @@
 
 /* DMM */
 #define DMM_SYSCONFIG		(OMAP44XX_DMM_BASE + 0x10)
-#define DMM_LISA_MAP		(OMAP44XX_DMM_BASE + 0x100)
+#define DMM_LISA_MAP		(OMAP44XX_DMM_BASE + 0x40)
 
 /* SMS */
 #define SMS_SYSCONFIG           (OMAP44XX_SMS_BASE + 0x10)
@@ -197,6 +195,7 @@
 #define PRM_BASE                        0x4a306000
 #define PRM_DEVICE_BASE                 (PRM_BASE + 0x1b00)
 #define PRM_RSTCTRL                     PRM_DEVICE_BASE
+#define PRM_RSTCTRL_RESET		0x01
 #define PRM_RSTCTRL_RESET_WARM_BIT      (1<<0)
 #define PRM_RSTCTRL_RESET_COLD_BIT      (1<<1)
 #define PRM_RSTST                       (PRM_DEVICE_BASE + 0x4)

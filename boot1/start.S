@@ -24,13 +24,17 @@
  * SUCH DAMAGE.
  */
 
-#include <omap4/hw.h>
-
 	.text
-	.globl _start
+	.globl	_start
 _start:
 	bl	boot1
-	ldr	sp, =(SDRAM_STACK)
+	ldr	r0, =stack_base
+	ldr	sp, [r0]
 	bic	sp, sp, #7	@ 8-byte alignment for ABI compliance
 	bl	main
 	b .
+
+	.data
+	.globl	stack_base
+stack_base:
+	.word	0x82000000

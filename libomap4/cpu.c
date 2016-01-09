@@ -105,3 +105,44 @@ warm_reset(void)
 {
 	return (readl(PRM_RSTST) & PRM_RSTST_WARM_RESET_MASK);
 }
+
+uint32_t
+get_sdram_banks(void)
+{
+	return 1;
+}
+
+uint32_t
+get_sdram_start(void)
+{
+	return 0x8000000;
+}
+
+uint32_t
+get_sdram_size(void)
+{
+	uint32_t section, size, addr, total_size = 0;
+	uint32_t sdrc_addrspc;
+	uint32_t sdrc_map;
+	uint32_t i;
+	for (i = 0; i < 4; i++) {
+		section = readl(DMM_LISA_MAP + i * 4);
+		addr = section & (0xff << 24);
+		sdrc_addrspc = (section & (3 << 16)) >> 16;
+		sdrc_map = (section & (3 << 8)) >> 8;
+
+		if (0 == sdrc_map)
+			continue;
+
+		if (0 != sdrc_addrspc)
+			continue;
+
+		/* update SDRAM size */
+		size = (section & (7 << 20)) >> 20;
+		size = 1 << size;
+		size *= 0x01000000; /* 16M */
+		total_size += size;
+
+	}
+	return total_size;
+}

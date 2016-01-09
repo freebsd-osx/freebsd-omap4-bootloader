@@ -57,7 +57,4 @@ struct gptimer {
 	uint32_t tcar2;		/* 0x44 r */
 };
 
-void udelay(unsigned long usec);
-unsigned long get_timer(unsigned long base);
-
 #endif /* _OMAP4_TIMER_H_ */
