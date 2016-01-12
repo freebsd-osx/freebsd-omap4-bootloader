@@ -37,4 +37,4 @@ _start:
 	.data
 	.globl	stack_base
 stack_base:
-	.word	0x82000000
+	.word	0x8e000000

@@ -115,7 +115,7 @@ get_sdram_banks(void)
 uint32_t
 get_sdram_start(void)
 {
-	return 0x8000000;
+	return 0x80000000;
 }
 
 uint32_t
