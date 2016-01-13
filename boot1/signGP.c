@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 
 	/* default settings */
 	strcpy(ifname, "boot1.bin");
-	strcpy(ofname, "MLO");
+	strcpy(ofname, "boot1");
 	loadaddr = 0x40300000;
 
 	if ((argc == 2) || (argc == 3))
