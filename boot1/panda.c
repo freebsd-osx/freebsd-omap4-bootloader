@@ -35,6 +35,8 @@
 
 unsigned console = OMAP44XX_UART3;
 
+static struct storage stor;
+
 void
 mux_init(void)
 {
@@ -375,4 +377,13 @@ void
 storage_init(void)
 {
 	mmc_init(0);
+	stor.size = (unsigned long) mmc_size();
+	stor.read = mmc_bread;
+	stor.write = mmc_write;
+}
+
+struct storage *
+get_storage(void)
+{
+	return &stor;
 }

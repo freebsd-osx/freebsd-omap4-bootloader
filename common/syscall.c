@@ -195,9 +195,9 @@ syscall_dev_enum(va_list ap)
 		return (API_ENODEV);
 	}
 
-	di->cookie = (void *)get_mmc();
+	di->cookie = (void *)get_storage();
 	di->type = DEV_TYP_STOR | DT_STOR_MMC;
-	di->di_stor.block_count = (unsigned long)mmc_size();
+	di->di_stor.block_count = get_storage()->size;
 	di->di_stor.block_size = 512;
 
 	++count;
@@ -290,7 +290,7 @@ syscall_dev_read(va_list ap)
 		if (!act_len_stor)
 			return (API_EINVAL);
 
-		*act_len_stor = mmc_bread(buf, *start, *len_stor);
+		*act_len_stor = ((struct storage *)di->cookie)->read(buf, *start, *len_stor);
 	} else
 		return (API_ENODEV);
 

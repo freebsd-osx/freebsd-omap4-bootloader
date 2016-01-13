@@ -81,9 +81,17 @@ uint32_t	warm_reset(void);
 void		reset_cpu(void);
 
 int	mmc_init(int slot);
-int	mmc_read(u_long *dst, u_long start, unsigned size);
-int	mmc_bread(u_long *dst, u_long start, unsigned nblk);
+u_long	mmc_read(u_long *dst, u_long start, unsigned size);
+u_long	mmc_bread(u_long *dst, u_long start, unsigned nblk);
 int	mmc_write(u_long *src, u_long start, unsigned size);
 uint32_t	mmc_size(void);
-struct mmc	*get_mmc(void);
+
+struct storage {
+	u_long size;
+	u_long (*read)(u_long *dst, u_long start, unsigned nblk);
+	int (*write)(u_long *src, u_long start, unsigned size);
+};
+
+struct storage *get_storage(void);
+
 #endif /* !_BOOT_H_ */

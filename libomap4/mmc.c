@@ -844,19 +844,19 @@ mmc_init(int slot)
 	return (0);
 }
 
-int
+u_long
 mmc_read(u_long *dst, u_long start, unsigned size)
 {
-	int ret;
+	u_long ret;
 
 	ret = read_sector(mmc.host, dst, start, size);
 	return (ret);
 }
 
-int
+u_long
 mmc_bread(u_long *dst, u_long start, unsigned nblk)
 {
-	int ret;
+	u_long ret;
 
 	ret = read_sector(mmc.host, dst, start,
 	    (nblk * MMCSD_SECTOR_SIZE));
@@ -885,10 +885,4 @@ uint32_t
 mmc_size(void)
 {
 	return (mmc.size);
-}
-
-struct mmc *
-get_mmc(void)
-{
-	return (&mmc);
 }
