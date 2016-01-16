@@ -2,13 +2,16 @@
 
 .PATH: ${.CURDIR}/../common ${.CURDIR}/../../../common
 
+FILES= boot1 boot1.bin
+
 PROG=           boot1.elf
 NEWVERSWHAT=    "OMAP4 BOOT" ${MACHINE_ARCH}
-TEXT_BASE=	0x40300000
+BINDIR?=	/boot
+INSTALLFLAGS=	-b
 WARNS?=		2
-
-FILES= boot1.bin boot1
 MAN=
+
+TEXT_BASE=	0x40300000
 
 SRCS=	start.S boot1.c panda.c cons.c \
 	main.c vers.c util.c gpt.c crc32.c drv.c \
@@ -44,14 +47,14 @@ HOST_CC?= /usr/bin/cc
 vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
 	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
 
-boot1: ${PROG} signGP
+boot1: boot1.bin signGP
 	./signGP boot1.bin ${TEXT_BASE}
-
-signGP: ${.CURDIR}/signGP.c
-	${HOST_CC} -Wall -g -O3 -o ${.TARGET} ${.CURDIR}/signGP.c
 
 boot1.bin: ${PROG}
 	${OBJCOPY} -O binary ${PROG} ${.TARGET}
+
+signGP: ${.CURDIR}/signGP.c
+	${HOST_CC} -Wall -g -O3 -o ${.TARGET} ${.CURDIR}/signGP.c
 
 machine:
 	ln -sf ${.CURDIR}/../../../../${MACHINE_CPUARCH}/include machine
