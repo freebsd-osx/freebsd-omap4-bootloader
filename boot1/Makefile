@@ -25,11 +25,10 @@ SRCS+=	umoddi3.c udivsi3.S divsi3.S umodsi3.S aeabi_uldivmod.S aeabi_uidivmod.S 
 
 ACFLAGS+= -D__ASSEMBLY__
 
-# Decide level of UFS support.
-GPTBOOT_UFS?=	UFS1_AND_UFS2
-
 CFLAGS+= -DBOOTPROG=\"boot\" \
-	 -D${GPTBOOT_UFS} \
+	 -DGPT \
+	 -DUFS1_AND_UFS2 \
+	 -O3 \
 	 -I${.CURDIR}/../../../common \
 	 -I${.CURDIR}/../common \
 	 -I${.CURDIR}/../include \
@@ -51,7 +50,7 @@ boot1: boot1.bin signGP
 	./signGP boot1.bin ${TEXT_BASE}
 
 boot1.bin: ${PROG}
-	${OBJCOPY} -O binary ${PROG} ${.TARGET}
+	${OBJCOPY} -S -O binary ${PROG} ${.TARGET}
 
 signGP: ${.CURDIR}/signGP.c
 	${HOST_CC} -Wall -g -O3 -o ${.TARGET} ${.CURDIR}/signGP.c
