@@ -8,10 +8,10 @@ WARNS?=		2
 
 SRCS+=	clock.c vcore.c cpu.c sdram.c gpio.c mmc.c timer.c
 
-#CFLAGS+= -D_STANDALONE
 CFLAGS+= -I${.CURDIR}/../include/ \
 	 -I${.CURDIR}/../../../common \
 	 -I. \
+	 -O3 \
 	 -ffreestanding -msoft-float
 
 machine:
