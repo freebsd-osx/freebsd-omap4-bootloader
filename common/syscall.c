@@ -35,19 +35,9 @@
 #include "syscall.h"
 #include "api_public.h"
 
-#define DEBUG
-#undef DEBUG
-
-#ifdef DEBUG
-#define debug(fmt, args...) do { printf("%s(): "fmt, __func__, ##args); } while (0)
-#else
-#define debug(fmt, args...)
-#endif
-
 extern int stack_base;
 
 typedef	int (*cfp_t)(va_list argp);
-
 static int calls_no;
 
 void

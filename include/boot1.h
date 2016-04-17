@@ -31,6 +31,15 @@
 
 #include <machine/stdarg.h>
 
+#define DEBUG
+#undef DEBUG
+
+#ifdef DEBUG
+#define debug(fmt, args...) do { printf("%s(): "fmt, __func__, ##args); } while (0)
+#else
+#define debug(fmt, args...)
+#endif
+
 #define OMAP4430_ES1_0	0x44300100
 #define OMAP4430_ES2_0	0x44300200
 #define OMAP4430_ES2_1	0x44300210
