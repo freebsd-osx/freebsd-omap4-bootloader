@@ -53,6 +53,7 @@
 void	mux_init(void);
 void	clock_init(void);
 void	scale_vcores(void);
+void	timer_init(void);
 void	sdram_init(void);
 void	cons_init(void);
 void	storage_init(void);

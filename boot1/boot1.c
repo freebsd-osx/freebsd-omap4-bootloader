@@ -45,5 +45,6 @@ boot1(void)
 	clock_init();
 	sdram_init();
 	bzero(__bss_start, __bss_end - __bss_start);
+	timer_init();
 	storage_init();
 }

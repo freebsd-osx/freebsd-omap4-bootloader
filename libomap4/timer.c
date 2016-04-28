@@ -40,7 +40,7 @@ static u_long lastinc;
 
 #define CONFIG_WD_PERIOD	(10 * 1000 * 1000)	/* 10 seconds default */
 
-int
+void
 timer_init(void)
 {
 	/* start the counter ticking up, reload value on overflow */
@@ -53,8 +53,6 @@ timer_init(void)
 	lastinc = readl(&timer_base->tcrr) /
 			(TIMER_CLOCK / CONFIG_SYS_HZ);
 	tbl = 0;	/* start "advancing" time stamp from 0 */
-
-	return (0);
 }
 
 u_long
