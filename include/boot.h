@@ -32,7 +32,7 @@
 #include <machine/stdarg.h>
 
 #define DEBUG
-#undef DEBUG
+//#undef DEBUG
 
 #ifdef DEBUG
 #define debug(fmt, args...) do { printf("%s(): "fmt, __func__, ##args); } while (0)

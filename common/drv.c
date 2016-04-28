@@ -27,7 +27,7 @@
 #include <sys/cdefs.h>
 #include <sys/param.h>
 
-#include <boot1.h>
+#include <boot.h>
 
 #include "drv.h"
 #include "util.h"

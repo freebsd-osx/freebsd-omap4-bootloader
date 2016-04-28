@@ -2,9 +2,9 @@
 
 .PATH: ${.CURDIR}/../common ${.CURDIR}/../../../common
 
-FILES= boot1 boot1.bin
+FILES= boot boot.bin
 
-PROG=           boot1.elf
+PROG=           boot.elf
 NEWVERSWHAT=    "OMAP4 BOOT" ${MACHINE_ARCH}
 BINDIR?=	/boot
 INSTALLFLAGS=	-b
@@ -13,7 +13,7 @@ MAN=
 
 TEXT_BASE=	0x40300000
 
-SRCS=	start.S boot1.c panda.c cons.c \
+SRCS=	start.S boot.c panda.c cons.c \
 	main.c vers.c util.c gpt.c crc32.c drv.c \
 	syscall.c
 
@@ -36,7 +36,7 @@ CFLAGS+= -DBOOTPROG=\"boot\" \
 	 -ffreestanding -msoft-float
 
 LDFLAGS= -nostdlib -static -dead_strip \
-	 -T ${.CURDIR}/boot1.lds -Ttext ${TEXT_BASE}
+	 -T ${.CURDIR}/boot.lds -Ttext ${TEXT_BASE}
 
 LIBOMAP4= 	${.OBJDIR}/../libomap4/libomap4.a
 LDADD=		${LIBOMAP4}
@@ -46,10 +46,10 @@ HOST_CC?= /usr/bin/cc
 vers.c:	${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version
 	sh ${.CURDIR}/../../../common/newvers.sh ${.CURDIR}/version ${NEWVERSWHAT}
 
-boot1: boot1.bin signGP
-	./signGP boot1.bin ${TEXT_BASE}
+boot: boot.bin signGP
+	./signGP boot.bin ${TEXT_BASE}
 
-boot1.bin: ${PROG}
+boot.bin: ${PROG}
 	${OBJCOPY} -S -O binary ${PROG} ${.TARGET}
 
 signGP: ${.CURDIR}/signGP.c
@@ -58,6 +58,6 @@ signGP: ${.CURDIR}/signGP.c
 machine:
 	ln -sf ${.CURDIR}/../../../../${MACHINE_CPUARCH}/include machine
 
-CLEANFILES+= boot1 boot1.bin vers.c signGP machine
+CLEANFILES+= boot boot.bin vers.c signGP machine
 
 .include <bsd.prog.mk>

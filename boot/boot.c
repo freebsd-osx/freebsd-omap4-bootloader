@@ -24,17 +24,27 @@
  * SUCH DAMAGE.
  */
 
-	.text
-	.globl	_start
-_start:
-	bl	boot1
-	ldr	r0, =stack_base
-	ldr	sp, [r0]
-	bic	sp, sp, #7	@ 8-byte alignment for ABI compliance
-	bl	main
-	b .
+#include <boot.h>
+#include <io.h>
 
-	.data
-	.globl	stack_base
-stack_base:
-	.word	0x8e000000
+#include "util.h"
+
+extern unsigned char __bss_start[];
+extern unsigned char __bss_end[];
+
+void
+boot(void)
+{
+	if (warm_reset())
+		force_emif_self_refresh();
+
+	mux_init();
+	enable_uart_clocks();
+	cons_init();
+	scale_vcores();
+	clock_init();
+	sdram_init();
+	bzero(__bss_start, __bss_end - __bss_start);
+	timer_init();
+	storage_init();
+}

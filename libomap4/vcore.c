@@ -25,8 +25,10 @@
  */
 
 #include <sys/types.h>
-#include <boot1.h>
+
+#include <boot.h>
 #include <io.h>
+
 #include <omap4/hw.h>
 
 static void

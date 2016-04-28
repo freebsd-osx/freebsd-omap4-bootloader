@@ -27,7 +27,7 @@
 #include <sys/param.h>
 #include <sys/types.h>
 
-#include <boot1.h>
+#include <boot.h>
 
 #include "util.h"
 #include "cons.h"

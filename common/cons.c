@@ -24,7 +24,7 @@
  * SUCH DAMAGE.
  */
 
-#include <boot1.h>
+#include <boot.h>
 #include <io.h>
 
 #define THR	0x00

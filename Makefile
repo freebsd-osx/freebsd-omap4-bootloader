@@ -1,5 +1,5 @@
 .include <src.opts.mk>
 
-SUBDIR=	libomap4 boot1
+SUBDIR=	libomap4 boot
 
 .include <bsd.subdir.mk>

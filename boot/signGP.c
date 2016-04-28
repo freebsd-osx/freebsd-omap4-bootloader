@@ -51,8 +51,8 @@ main(int argc, char *argv[])
 	int i;
 
 	/* default settings */
-	strcpy(ifname, "boot1.bin");
-	strcpy(ofname, "boot1");
+	strcpy(ifname, "boot.bin");
+	strcpy(ofname, "boot");
 	loadaddr = 0x40300000;
 
 	if ((argc == 2) || (argc == 3))
