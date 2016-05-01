@@ -38,6 +38,7 @@ boot(void)
 	if (warm_reset())
 		force_emif_self_refresh();
 
+	watchdog_init();
 	mux_init();
 	enable_uart_clocks();
 	cons_init();

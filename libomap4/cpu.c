@@ -146,3 +146,12 @@ get_sdram_size(void)
 	}
 	return total_size;
 }
+
+void
+watchdog_init(void)
+{
+	writel(WD_UNLOCK1, WD2_BASE + WSPR);
+	while (readl(WD2_BASE + WWPS))
+		;
+	writel(WD_UNLOCK2, WD2_BASE + WSPR);
+}

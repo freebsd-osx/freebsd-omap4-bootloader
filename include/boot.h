@@ -32,7 +32,7 @@
 #include <machine/stdarg.h>
 
 #define DEBUG
-//#undef DEBUG
+#undef DEBUG
 
 #ifdef DEBUG
 #define debug(fmt, args...) do { printf("%s(): "fmt, __func__, ##args); } while (0)
@@ -57,6 +57,7 @@ void	timer_init(void);
 void	sdram_init(void);
 void	cons_init(void);
 void	storage_init(void);
+void	watchdog_init(void);
 
 void		sdelay(unsigned long loops);
 void		udelay(unsigned long usec);
