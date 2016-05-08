@@ -36,7 +36,7 @@ CFLAGS+= -DBOOTPROG=\"boot\" \
 	 -ffreestanding -msoft-float
 
 LDFLAGS= -nostdlib -static -dead_strip \
-	 -T ${.CURDIR}/boot.lds -Ttext ${TEXT_BASE}
+	 -T ${.CURDIR}/ldscript.omap4 -Ttext ${TEXT_BASE}
 
 LIBOMAP4= 	${.OBJDIR}/../libomap4/libomap4.a
 LDADD=		${LIBOMAP4}
